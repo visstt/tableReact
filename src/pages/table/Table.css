@@ -96,3 +96,32 @@ select {
 select::-ms-expand {
   display: none;
 }
+.subject-select {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+  text-align: center;
+}
+
+.subject-select:hover {
+  background-color: #e0e0e0;
+}
+.subject-select,
+.class-select {
+  background-color: #f0f0f0;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 10px;
+  outline: none;
+}
+.subject-select:hover,
+.class-select:hover {
+  background-color: #e0e0e0;
+}

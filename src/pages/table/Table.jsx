@@ -1,28 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./Table.css";
 
 function Table() {
-  const students = [
-    { name: "Иванов Иван И.", scores: Array(20).fill("") },
-    { name: "Сергеев Антон", scores: Array(20).fill("") },
-    { name: "Комчаров Юрий С.", scores: Array(20).fill("") },
-    { name: "Иванова Вероника С.", scores: Array(20).fill("") },
-    { name: "Захаров Артем С.", scores: Array(20).fill("") },
-    { name: "Студенко Никита С.", scores: Array(20).fill("") },
-    { name: "Абдулаев Шукрат В.", scores: Array(20).fill("") },
-    { name: "Бухарев Бахрам Ф.", scores: Array(20).fill("") },
-    { name: "Сергеев Оруз Р.", scores: Array(20).fill("") },
-    { name: "Ушаков Антон А.", scores: Array(20).fill("") },
-    { name: "Римаков Роман Е.", scores: Array(20).fill("") },
-    { name: "Пак Анастасия П.", scores: Array(20).fill("") },
-    { name: "Павлов Ренат А.", scores: Array(20).fill("") },
-    { name: "Балакина Адилия Г.", scores: Array(20).fill("") },
-    { name: "Катибергенов Алик А.", scores: Array(20).fill("") },
-    { name: "Гатин Анатолий А.", scores: Array(20).fill("") },
-    { name: "Темерина Динара С.", scores: Array(20).fill("") },
-    { name: "Балабанова Гули Е.", scores: Array(20).fill("") },
-  ];
-
+  const [students, setStudents] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [classes, setClasses] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState("");
+  const [selectedClass, setSelectedClass] = useState("");
   const dates = [
     "1.11",
     "2.11",
@@ -46,14 +30,78 @@ function Table() {
     "20.11",
   ];
 
+  useEffect(() => {
+    // Получение всех предметов
+    fetch("http://localhost:8080/subject/getAllSubjects")
+      .then((response) => response.json())
+      .then((data) => setSubjects(data))
+      .catch((error) =>
+        console.error("Ошибка при получении предметов:", error)
+      );
+
+    // Получение всех классов
+    fetch("http://localhost:8080/class/getAllClasses")
+      .then((response) => response.json())
+      .then((data) => setClasses(data))
+      .catch((error) => console.error("Ошибка при получении классов:", error));
+
+    // Получение всех студентов
+    fetch("http://localhost:8080/student/getAllStudents")
+      .then((response) => response.json())
+      .then((data) => setStudents(data))
+      .catch((error) =>
+        console.error("Ошибка при получении студентов:", error)
+      );
+  }, []);
+
+  // Фильтруем студентов по выбранному классу
+  const filteredStudents = students.filter(
+    (student) =>
+      selectedClass === "" || student.classId === Number(selectedClass)
+  );
+
+  const formatName = (fullName) => {
+    const [lastName, firstName, middleName] = fullName.split(" ");
+    return fullName.length > 20 && middleName
+      ? `${lastName} ${firstName.charAt(0)}. ${middleName.charAt(0)}.`
+      : fullName;
+  };
+
   return (
     <div className="container">
       <div className="buttons">
-        <button>Предмет: Физ.Культура</button>
+        {/* Выпадающий список предметов */}
+        <select
+          value={selectedSubject}
+          onChange={(e) => setSelectedSubject(e.target.value)}
+          className="subject-select"
+        >
+          <option value="">Выберите предмет</option>
+          {subjects.map((subject) => (
+            <option key={subject.id} value={subject.id}>
+              {subject.subjectName}
+            </option>
+          ))}
+        </select>
+
         <button>Активность класса</button>
         <button>Рейтинг класса</button>
-        <button>Класс: 7Б</button>
+
+        {/* Выпадающий список классов */}
+        <select
+          value={selectedClass}
+          onChange={(e) => setSelectedClass(e.target.value)}
+          className="class-select"
+        >
+          <option value="">Выберите класс</option>
+          {classes.map((cls) => (
+            <option key={cls.classId} value={cls.classId}>
+              {cls.className}
+            </option>
+          ))}
+        </select>
       </div>
+
       <div className="table-container">
         <table>
           <thead>
@@ -68,32 +116,35 @@ function Table() {
             </tr>
           </thead>
           <tbody>
-            {students.map((student, index) => (
+            {filteredStudents.map((student, index) => (
               <tr key={index}>
                 <td className="name">
                   <div className="name-checkbox">
                     <input type="checkbox" />
-                    <span>{student.name}</span>
+                    <span>{formatName(student.fullName)}</span>
                   </div>
                 </td>
-                {student.scores.map((_, idx) => (
-                  <td key={idx}>
-                    <select className="score-select">
-                      <option value=""></option>
-                      <option value="5">5</option>
-                      <option value="4">4</option>
-                      <option value="3">3</option>
-                      <option value="2">2</option>
-                      <option value="н">Н</option>
-                      <option value="б">Б</option>
-                    </select>
-                  </td>
-                ))}
+                {Array(20)
+                  .fill("")
+                  .map((_, idx) => (
+                    <td key={idx}>
+                      <select className="score-select">
+                        <option value=""></option>
+                        <option value="5">5</option>
+                        <option value="4">4</option>
+                        <option value="3">3</option>
+                        <option value="2">2</option>
+                        <option value="н">Н</option>
+                        <option value="б">Б</option>
+                      </select>
+                    </td>
+                  ))}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
       <div className="footer-buttons">
         <button>+</button>
         <button>-</button>
