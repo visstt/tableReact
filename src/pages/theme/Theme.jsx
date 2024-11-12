@@ -8,18 +8,21 @@ function Theme() {
   const { subjectId } = useParams(); // Получаем subjectId из URL
 
   useEffect(() => {
+    console.log("Полученный subjectId:", subjectId); // Проверяем значение subjectId
+
     const fetchThemes = async () => {
       try {
         const response = await fetch(
           `http://localhost:8080/theme/getAllThemes/${subjectId}`
         );
         if (!response.ok) {
-          throw new Error("Ошибка при загрузке тем");
+          const errorText = await response.text();
+          throw new Error(`Ошибка при загрузке тем: ${errorText}`);
         }
         const data = await response.json();
         setThemes(data);
       } catch (err) {
-        setError(err.message);
+        setError(`Ошибка: ${err.message}`);
       } finally {
         setLoading(false);
       }
