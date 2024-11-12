@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import axios from "axios";
 
 function Theme() {
   const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const { subjectId } = useParams();
+  const classId = new URLSearchParams(location.search).get("classId");
 
   useEffect(() => {
-    console.log("Полученный subjectId:", subjectId); // Проверка значения subjectId
-
     const fetchThemes = async () => {
       if (!subjectId) {
         setError("ID предмета не найден!");
@@ -18,25 +18,17 @@ function Theme() {
       }
 
       try {
-        const response = await fetch(
+        // Убедитесь, что запрос направлен на правильный URL
+        const response = await axios.get(
           `http://localhost:8080/theme/getAllThemes/${subjectId}`
         );
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`Ошибка при загрузке тем: ${errorText}`);
-        }
-
-        const data = await response.json();
-        setThemes(data);
+        setThemes(response.data);
       } catch (err) {
-        console.error("Ошибка запроса:", err); // Детализированное сообщение в консоли
-        setError(`Ошибка: ${err.message}`);
+        setError("Ошибка при загрузке тем");
       } finally {
         setLoading(false);
       }
     };
-
     fetchThemes();
   }, [subjectId]);
 
@@ -51,7 +43,7 @@ function Theme() {
           {themes.map((theme) => (
             <li key={theme.themeId}>
               <Link
-                to="/theme/details"
+                to={`/theme/details?classId=${classId}&subjectId=${subjectId}&themeId=${theme.themeId}`}
                 state={{
                   themeName: theme.themeName,
                   timeInterval: theme.timeInterval,

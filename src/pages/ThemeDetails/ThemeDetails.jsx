@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import axios from "axios";
 
 function ThemeDetails() {
   const [students, setStudents] = useState([]);
@@ -7,35 +8,32 @@ function ThemeDetails() {
   const [error, setError] = useState(null);
   const location = useLocation();
 
-  // Получаем classId из state, переданного через Link
-  const { classId, className } = location.state || {};
+  // Получаем параметры из строки запроса
+  const classId = new URLSearchParams(location.search).get("classId");
+  const themeId = new URLSearchParams(location.search).get("themeId");
 
-  useEffect(() => {
-    console.log("Полученный classId из state:", classId); // Логирование для проверки
+  // Функция для загрузки студентов
+  const fetchStudents = async () => {
+    if (!classId) {
+      console.error("classId не найден!");
+      return;
+    }
 
-    if (classId) {
-      const fetchStudents = async () => {
-        try {
-          const response = await fetch(
-            `http://localhost:8080/student/getStudentsByClassId/${classId}`
-          );
-          if (!response.ok) {
-            throw new Error("Ошибка при загрузке студентов");
-          }
-          const data = await response.json();
-          setStudents(data);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-
-      fetchStudents();
-    } else {
-      setError("classId не найден!");
+    try {
+      const response = await axios.get(
+        `http://localhost:8080/student/getStudentsByClassId/${classId}`
+      );
+      setStudents(response.data);
+    } catch (error) {
+      console.error("Ошибка при загрузке студентов:", error);
+      setError("Ошибка при загрузке студентов");
+    } finally {
       setLoading(false);
     }
+  };
+
+  useEffect(() => {
+    fetchStudents();
   }, [classId]);
 
   if (loading) return <p>Загрузка...</p>;
@@ -43,7 +41,7 @@ function ThemeDetails() {
 
   return (
     <div>
-      <h2>Список студентов для класса: {className}</h2>
+      <h2>Список студентов для класса: {classId}</h2>
       <table>
         <thead>
           <tr>

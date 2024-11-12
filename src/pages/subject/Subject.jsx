@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
@@ -15,16 +16,12 @@ function Subject() {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           `http://localhost:8080/classSubject/getSubjects/${classId}`
         );
-        if (!response.ok) {
-          throw new Error("Ошибка при загрузке данных");
-        }
-        const data = await response.json();
-        setSubjects(data);
+        setSubjects(response.data);
       } catch (err) {
-        setError(err.message);
+        setError("Ошибка при загрузке данных");
       } finally {
         setLoading(false);
       }
@@ -45,13 +42,11 @@ function Subject() {
         {subjects.map((subject) => (
           <li key={subject.subjectId}>
             <Link
-              to={{
-                pathname: `/theme/${subject.subjectId}`,
-                state: {
-                  subjectName: subject.subjectName,
-                  classId: classId, // Передаем classId
-                  className: className, // Передаем className
-                },
+              to={`/theme/${subject.subjectId}?classId=${classId}&subjectId=${subject.subjectId}`}
+              state={{
+                subjectName: subject.subjectName,
+                classId: classId,
+                className: className,
               }}
             >
               {subject.subjectName}

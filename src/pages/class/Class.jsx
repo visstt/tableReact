@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 function Class() {
   const [classes, setClasses] = useState([]);
@@ -9,21 +10,16 @@ function Class() {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const response = await fetch(
+        const response = await axios.get(
           "http://localhost:8080/class/getAllClasses"
         );
-        if (!response.ok) {
-          throw new Error("Ошибка при загрузке данных");
-        }
-        const data = await response.json();
-        setClasses(data);
+        setClasses(response.data);
       } catch (err) {
-        setError(err.message);
+        setError("Ошибка при загрузке данных");
       } finally {
         setLoading(false);
       }
     };
-
     fetchClasses();
   }, []);
 
@@ -36,13 +32,7 @@ function Class() {
       <ul>
         {classes.map((classItem) => (
           <li key={classItem.classId}>
-            <Link
-              to={{
-                pathname: "/subject",
-                search: `?classId=${classItem.classId}`,
-                state: { className: classItem.className }, // Убедитесь, что передаете className
-              }}
-            >
+            <Link to={`/subject?classId=${classItem.classId}`}>
               {classItem.className}
             </Link>
           </li>
