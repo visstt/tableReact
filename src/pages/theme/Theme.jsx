@@ -5,35 +5,39 @@ function Theme() {
   const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { subjectId } = useParams(); // Получаем subjectId из URL
+  const { subjectId } = useParams();
 
   useEffect(() => {
-    console.log("Полученный subjectId:", subjectId); // Проверяем значение subjectId
+    console.log("Полученный subjectId:", subjectId); // Проверка значения subjectId
 
     const fetchThemes = async () => {
+      if (!subjectId) {
+        setError("ID предмета не найден!");
+        setLoading(false);
+        return;
+      }
+
       try {
         const response = await fetch(
           `http://localhost:8080/theme/getAllThemes/${subjectId}`
         );
+
         if (!response.ok) {
           const errorText = await response.text();
           throw new Error(`Ошибка при загрузке тем: ${errorText}`);
         }
+
         const data = await response.json();
         setThemes(data);
       } catch (err) {
+        console.error("Ошибка запроса:", err); // Детализированное сообщение в консоли
         setError(`Ошибка: ${err.message}`);
       } finally {
         setLoading(false);
       }
     };
 
-    if (subjectId) {
-      fetchThemes();
-    } else {
-      setError("ID предмета не найден!");
-      setLoading(false);
-    }
+    fetchThemes();
   }, [subjectId]);
 
   if (loading) return <p>Загрузка...</p>;
