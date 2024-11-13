@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
+import styles from "./Theme.module.css";
 
 function Theme() {
   const [themes, setThemes] = useState([]);
@@ -8,25 +9,22 @@ function Theme() {
   const [error, setError] = useState(null);
   const location = useLocation();
 
-  // Получаем classId и subjectName из query-параметров
   const classId = new URLSearchParams(location.search).get("classId");
   const className = new URLSearchParams(location.search).get("className");
   const subjectName = new URLSearchParams(location.search).get("subjectName");
 
-  const [subjectId, setSubjectId] = useState(null); // Состояние для subjectId
+  const [subjectId, setSubjectId] = useState(null);
 
-  // Функция для получения subjectId по subjectName
   const fetchSubjectId = async () => {
     try {
       const response = await axios.get(
         `http://localhost:8080/classSubject/getSubjects/${classId}`
       );
-      // Ищем subjectId по subjectName
       const subject = response.data.find(
         (subj) => subj.subjectName === subjectName
       );
       if (subject) {
-        setSubjectId(subject.subjectId); // Устанавливаем subjectId
+        setSubjectId(subject.subjectId);
       } else {
         setError("Предмет не найден");
       }
@@ -41,7 +39,6 @@ function Theme() {
     }
   }, [classId, subjectName]);
 
-  // Функция для загрузки тем по subjectId
   const fetchThemes = async () => {
     if (!subjectId) return;
 
@@ -63,17 +60,18 @@ function Theme() {
     }
   }, [subjectId]);
 
-  if (loading) return <p>Загрузка...</p>;
-  if (error) return <p>{error}</p>;
+  if (loading) return <p className={styles.message}>Загрузка...</p>;
+  if (error) return <p className={styles.message}>{error}</p>;
 
   return (
-    <div>
-      <h2>Темы для предмета: {subjectName}</h2>
+    <div className={styles.container}>
+      <h2 className={styles.heading}>Темы для предмета: {subjectName}</h2>
       {themes.length > 0 ? (
         <ul>
           {themes.map((theme) => (
             <li key={theme.themeId}>
               <Link
+                className={styles.button}
                 to={`/themeDetails?classId=${classId}&className=${className}&subjectName=${subjectName}&themeName=${theme.themeName}&themeId=${theme.themeId}`}
               >
                 {theme.themeName}
@@ -82,7 +80,7 @@ function Theme() {
           ))}
         </ul>
       ) : (
-        <p>Темы не найдены</p>
+        <p className={styles.message}>Темы не найдены</p>
       )}
     </div>
   );
