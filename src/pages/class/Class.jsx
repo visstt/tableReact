@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import styles from "./Class.module.css";
 
 function Class() {
   const [classes, setClasses] = useState([]);
@@ -27,17 +28,20 @@ function Class() {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <h2>Список классов</h2>
-      <ul>
+    <div className={styles.body}>
+      <div className={styles.container}>
+        <h1 className={styles.heading}>Выбор класса</h1>
         {classes.map((classItem) => (
-          <li key={classItem.classId}>
-            <Link to={`/subject?classId=${classItem.classId}`}>
-              {classItem.className}
-            </Link>
-          </li>
+          <Link
+            key={classItem.classId}
+            to={`/subject?classId=${
+              classItem.classId
+            }&className=${encodeURIComponent(classItem.className)}`}
+          >
+            <button className={styles.button}>{classItem.className}</button>
+          </Link>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }

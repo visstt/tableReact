@@ -15,7 +15,7 @@ function App() {
           <Route path="/table" element={<Table />} />
           <Route path="/class" element={<Class />} />
           <Route path="/subject" element={<Subject />} />
-          <Route path="/theme/details" element={<ThemeDetails />} />
+          <Route path="/themeDetails" element={<ThemeDetails />} />
         </Routes>
       </>
     </Router>

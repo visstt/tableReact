@@ -1,6 +1,7 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import axios from "axios";
+import styles from "./Subject.module.css";
 
 function Subject() {
   const [subjects, setSubjects] = useState([]);
@@ -36,24 +37,18 @@ function Subject() {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <h2>Предметы для класса: {className}</h2>
-      <ul>
+    <div className={styles.body}>
+      <div className={styles.container}>
+        <h2 className={styles.heading}>Предметы для класса: {className}</h2>
         {subjects.map((subject) => (
-          <li key={subject.subjectId}>
-            <Link
-              to={`/theme/${subject.subjectId}?classId=${classId}&subjectId=${subject.subjectId}`}
-              state={{
-                subjectName: subject.subjectName,
-                classId: classId,
-                className: className,
-              }}
-            >
-              {subject.subjectName}
-            </Link>
-          </li>
+          <Link
+            key={subject.subjectId}
+            to={`/theme/${subject.subjectId}?classId=${classId}&className=${className}&subjectName=${subject.subjectName}`}
+          >
+            <button className={styles.button}>{subject.subjectName}</button>
+          </Link>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
