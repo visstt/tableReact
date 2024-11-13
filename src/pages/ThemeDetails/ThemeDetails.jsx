@@ -93,7 +93,7 @@ function ThemeDetails() {
           <thead>
             <tr>
               <th>ФИО учащегося</th>
-              <th colSpan="4">Оценки</th>
+              <th colSpan="5">Оценки</th>
             </tr>
           </thead>
           <tbody>
@@ -101,7 +101,7 @@ function ThemeDetails() {
               students.map((student) => (
                 <tr key={student.studentId}>
                   <td>{student.fullName}</td>
-                  {Array(4)
+                  {Array(5)
                     .fill("")
                     .map((_, idx) => (
                       <td key={idx} className={styles.selectCell}>
