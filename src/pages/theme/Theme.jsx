@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./Theme.module.css";
 import { url } from "../../costants/constants";
@@ -9,6 +9,7 @@ function Theme() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const classId = new URLSearchParams(location.search).get("classId");
   const className = new URLSearchParams(location.search).get("className");
@@ -83,6 +84,9 @@ function Theme() {
       ) : (
         <p className={styles.message}>Темы не найдены</p>
       )}
+      <button className={styles.btn} onClick={() => navigate(-1)}>
+        Назад
+      </button>
     </div>
   );
 }

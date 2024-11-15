@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./Subject.module.css";
 import { url } from "../../costants/constants";
@@ -9,6 +9,7 @@ function Subject() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const classId = new URLSearchParams(location.search).get("classId");
   const className =
@@ -49,6 +50,9 @@ function Subject() {
             <button className={styles.button}>{subject.subjectName}</button>
           </Link>
         ))}
+        <button className={styles.btn} onClick={() => navigate(-1)}>
+          Назад
+        </button>
       </div>
     </div>
   );
