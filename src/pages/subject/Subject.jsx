@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import axios from "axios";
 import styles from "./Subject.module.css";
+import { url } from "../../costants/constants";
 
 function Subject() {
   const [subjects, setSubjects] = useState([]);
@@ -18,7 +19,7 @@ function Subject() {
     const fetchSubjects = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/classSubject/getSubjects/${classId}`
+          `${url}/classSubject/getSubjects/${classId}`
         );
         setSubjects(response.data);
       } catch (err) {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import styles from "./Class.module.css";
+import { url } from "../../costants/constants";
 
 function Class() {
   const [classes, setClasses] = useState([]);
@@ -11,9 +12,7 @@ function Class() {
   useEffect(() => {
     const fetchClasses = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:8080/class/getAllClasses"
-        );
+        const response = await axios.get(`${url}/class/getAllClasses`);
         setClasses(response.data);
       } catch (err) {
         setError("Ошибка при загрузке данных");

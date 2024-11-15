@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./Table.css";
+import { url } from "../../costants/constants";
 
 function Table() {
   const [students, setStudents] = useState([]);
@@ -32,7 +33,7 @@ function Table() {
 
   useEffect(() => {
     // Получение всех предметов
-    fetch("http://localhost:8080/subject/getAllSubjects")
+    fetch(`${url}/subject/getAllSubjects`)
       .then((response) => response.json())
       .then((data) => setSubjects(data))
       .catch((error) =>
@@ -40,13 +41,13 @@ function Table() {
       );
 
     // Получение всех классов
-    fetch("http://localhost:8080/class/getAllClasses")
+    fetch(`${url}/class/getAllClasses`)
       .then((response) => response.json())
       .then((data) => setClasses(data))
       .catch((error) => console.error("Ошибка при получении классов:", error));
 
     // Получение всех студентов
-    fetch("http://localhost:8080/student/getAllStudents")
+    fetch(`${url}/student/getAllStudents`)
       .then((response) => response.json())
       .then((data) => setStudents(data))
       .catch((error) =>

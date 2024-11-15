@@ -1,0 +1,41 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: 30px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: Arial, sans-serif;
+}
+.positive {
+  color: green;
+  font-weight: bold;
+}
+
+.negative {
+  color: red;
+  font-weight: bold;
+}
+
+th,
+td {
+  border: 1px solid black;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+input[type="text"] {
+  border: none;
+  background-color: transparent;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  font-size: 15px;
+}

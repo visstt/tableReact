@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import axios from "axios";
 import styles from "./Theme.module.css";
+import { url } from "../../costants/constants";
 
 function Theme() {
   const [themes, setThemes] = useState([]);
@@ -18,7 +19,7 @@ function Theme() {
   const fetchSubjectId = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:8080/classSubject/getSubjects/${classId}`
+        `${url}/classSubject/getSubjects/${classId}`
       );
       const subject = response.data.find(
         (subj) => subj.subjectName === subjectName
@@ -44,7 +45,7 @@ function Theme() {
 
     try {
       const response = await axios.get(
-        `http://localhost:8080/theme/getAllThemes/${subjectId}`
+        `${url}/theme/getAllThemes/${subjectId}`
       );
       setThemes(response.data);
     } catch (err) {

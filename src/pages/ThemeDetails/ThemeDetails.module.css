@@ -1,6 +1,8 @@
 .container {
   width: 90%;
   margin: auto;
+  display: flex;
+  flex-direction: column;
   font-family: Comfortaa;
 }
 
@@ -22,8 +24,8 @@ th,
 td {
   border: 1px solid #ddd;
   padding: 8px;
-  text-align: center;
   width: 0px;
+  /* text-align: left; */
 }
 
 th {
@@ -38,4 +40,32 @@ th {
   outline: none;
   text-align: center;
   background-color: #f9f9f9;
+}
+
+.button {
+  justify-content: center;
+  width: 200px;
+  padding: 15px;
+  background-color: #ffffff;
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: none;
+  color: black;
+  margin-bottom: 30px;
+}
+.notesContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.notesTextarea {
+  width: 800px;
+  height: 200px;
+  border-radius: 20px;
+  padding: 10px;
+  margin-bottom: 30px;
 }
