@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://visstt.github.io/tableReact.github.io/",
+  "homepage": "https://visstt.github.io/tableReact/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

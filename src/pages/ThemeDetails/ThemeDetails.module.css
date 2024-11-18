@@ -14,6 +14,9 @@
 .tableContainer {
   overflow-x: auto;
 }
+.center {
+  text-align: center;
+}
 
 table {
   border-collapse: collapse;
@@ -40,6 +43,30 @@ th {
   outline: none;
   text-align: center;
   background-color: #f9f9f9;
+  cursor: pointer;
+}
+.score5 {
+  background-color: #d2ffba;
+}
+
+.score4 {
+  background-color: #fbff89;
+}
+
+.score3 {
+  background-color: #ffd38d;
+}
+
+.score2 {
+  background-color: #ffd2d2;
+}
+
+.scoreН {
+  background-color: #ffbe86;
+}
+
+.scoreБ {
+  background-color: #ffa4a4;
 }
 
 .button {
