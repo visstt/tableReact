@@ -5,10 +5,12 @@
   height: 100vh;
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
+  padding: 10px; /* Добавлен отступ для мобильных устройств */
 }
 
 .container {
   text-align: center;
+  max-width: 100%; /* Убедимся, что контейнер не выходит за границы экрана */
 }
 
 .heading {
@@ -19,7 +21,8 @@
 
 .button {
   display: block;
-  width: 500px;
+  width: 90%; /* Заменено фиксированное значение на процент */
+  max-width: 500px; /* Установлен максимальный размер для крупных экранов */
   padding: 15px;
   margin: 10px auto;
   background-color: #ffffff;
@@ -40,9 +43,15 @@
 li {
   list-style-type: none;
 }
+ul {
+  margin: 0;
+  padding: 0;
+}
+
 .btn {
   display: block;
-  width: 200px;
+  width: 90%; /* Процент для адаптивности */
+  max-width: 200px; /* Максимальная ширина для крупных экранов */
   padding: 15px;
   margin: 10px auto;
   background-color: #ffffff;
@@ -53,4 +62,21 @@ li {
   cursor: pointer;
   text-decoration: none;
   color: black;
+}
+
+/* Адаптивность для маленьких экранов */
+@media (max-width: 600px) {
+  .heading {
+    font-size: 20px; /* Уменьшен размер заголовка */
+  }
+
+  .button,
+  .btn {
+    font-size: 16px; /* Уменьшен шрифт */
+    padding: 12px; /* Уменьшены отступы */
+  }
+
+  .message {
+    font-size: 16px; /* Уменьшен размер текста */
+  }
 }
