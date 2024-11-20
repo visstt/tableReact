@@ -1,41 +1,27 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
-import { toast } from "react-toastify"; // Импорт уведомлений
+import { toast } from "react-toastify";
 import styles from "./ThemeDetails.module.css";
-import { url } from "../../costants/constants"; // Убедитесь, что этот путь корректен
+import { url } from "../../costants/constants";
 
 function ThemeDetails() {
   const [students, setStudents] = useState([]);
   const [themeDetails, setThemeDetails] = useState(null);
   const [localEstimates, setLocalEstimates] = useState({});
-  const [selectedStudents, setSelectedStudents] = useState({});
+  const [selectedStudents, setSelectedStudents] = useState([]);
   const [selectedColumn, setSelectedColumn] = useState("estimation1");
+  const [selectedScore, setSelectedScore] = useState("5");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [currentComment, setCurrentComment] = useState("");
+  const [currentStudent, setCurrentStudent] = useState(null);
+  const [currentEstimationKey, setCurrentEstimationKey] = useState("");
   const location = useLocation();
 
   const { classId, className, subjectName, themeName, themeId } =
     Object.fromEntries(new URLSearchParams(location.search));
-
-  const getScoreClass = (score) => {
-    switch (score) {
-      case "5":
-        return styles.score5;
-      case "4":
-        return styles.score4;
-      case "3":
-        return styles.score3;
-      case "2":
-        return styles.score2;
-      case "н":
-        return styles.scoreН;
-      case "б":
-        return styles.scoreБ;
-      default:
-        return "";
-    }
-  };
 
   const fetchStudents = async () => {
     try {
@@ -69,6 +55,10 @@ function ThemeDetails() {
           estimation2: record.estimation2,
           estimation3: record.estimation3,
           estimation4: record.estimation4,
+          coment1: record.coment1,
+          coment2: record.coment2,
+          coment3: record.coment3,
+          coment4: record.coment4,
         };
         return acc;
       }, {});
@@ -82,6 +72,12 @@ function ThemeDetails() {
   const handleScoreChange = (e, studentId, estimationKey) => {
     const value = e.target.value;
 
+    if (value === "2") {
+      setCurrentStudent(studentId);
+      setCurrentEstimationKey(estimationKey);
+      setShowModal(true);
+    }
+
     setLocalEstimates((prev) => ({
       ...prev,
       [studentId]: {
@@ -91,41 +87,53 @@ function ThemeDetails() {
     }));
   };
 
-  const toggleStudentSelection = (studentId) => {
-    setSelectedStudents((prev) => ({
+  const handleSaveComment = () => {
+    setLocalEstimates((prev) => ({
       ...prev,
-      [studentId]: !prev[studentId],
+      [currentStudent]: {
+        ...prev[currentStudent],
+        [`${currentEstimationKey.replace("estimation", "coment")}`]:
+          currentComment,
+      },
     }));
+    setShowModal(false);
+    setCurrentComment("");
+    setCurrentStudent(null);
+    setCurrentEstimationKey("");
   };
 
-  const applyScoreToSelected = (value) => {
-    const updatedEstimates = { ...localEstimates };
+  const handleCancelComment = () => {
+    // Удаляем "двойку" из ячейки при отмене
+    setLocalEstimates((prev) => ({
+      ...prev,
+      [currentStudent]: {
+        ...prev[currentStudent],
+        [currentEstimationKey]: "", // Сбрасываем оценку на пустую строку
+      },
+    }));
 
-    Object.keys(selectedStudents).forEach((studentId) => {
-      if (selectedStudents[studentId]) {
-        if (!updatedEstimates[studentId]) {
-          updatedEstimates[studentId] = {};
-        }
-        updatedEstimates[studentId][selectedColumn] = value;
-      }
-    });
-
-    setLocalEstimates(updatedEstimates);
+    setShowModal(false);
+    setCurrentComment("");
+    setCurrentStudent(null);
+    setCurrentEstimationKey("");
   };
 
   const handleSave = async () => {
     const recordsToSave = students.map((student) => {
-      const { estimation1, estimation2, estimation3, estimation4 } =
-        localEstimates[student.studentId] || {};
+      const record = localEstimates[student.studentId] || {};
       return {
         studentId: student.studentId,
         subjectId: themeDetails.subjectId,
         themeId,
         classId,
-        estimation1: estimation1 || null,
-        estimation2: estimation2 || null,
-        estimation3: estimation3 || null,
-        estimation4: estimation4 || null,
+        estimation1: record.estimation1 || null,
+        estimation2: record.estimation2 || null,
+        estimation3: record.estimation3 || null,
+        estimation4: record.estimation4 || null,
+        coment1: record.coment1 || null,
+        coment2: record.coment2 || null,
+        coment3: record.coment3 || null,
+        coment4: record.coment4 || null,
       };
     });
 
@@ -135,10 +143,30 @@ function ThemeDetails() {
         recordsToSave
       );
       fetchStudents();
-      toast.success("Оценки успешно сохранены!"); // Успешное уведомление
+      toast.success("Оценки успешно сохранены!");
     } catch {
-      toast.error("Ошибка при сохранении оценок!"); // Уведомление об ошибке
+      toast.error("Ошибка при сохранении оценок!");
     }
+  };
+
+  const handleSelectStudent = (studentId) => {
+    const newSelectedStudents = selectedStudents.includes(studentId)
+      ? selectedStudents.filter((id) => id !== studentId)
+      : [...selectedStudents, studentId];
+
+    setSelectedStudents(newSelectedStudents);
+  };
+
+  const handleBulkApply = () => {
+    selectedStudents.forEach((studentId) => {
+      setLocalEstimates((prev) => ({
+        ...prev,
+        [studentId]: {
+          ...prev[studentId],
+          [selectedColumn]: selectedScore,
+        },
+      }));
+    });
   };
 
   useEffect(() => {
@@ -148,6 +176,25 @@ function ThemeDetails() {
       fetchThemeJournal();
     }
   }, [themeId]);
+
+  const getScoreClass = (score) => {
+    switch (score) {
+      case "5":
+        return styles.score5;
+      case "4":
+        return styles.score4;
+      case "3":
+        return styles.score3;
+      case "2":
+        return styles.score2;
+      case "н":
+        return styles.scoreН;
+      case "б":
+        return styles.scoreБ;
+      default:
+        return "";
+    }
+  };
 
   if (loading) return <p>Загрузка...</p>;
   if (error) return <p>{error}</p>;
@@ -177,22 +224,21 @@ function ThemeDetails() {
                   const record = localEstimates[student.studentId] || {};
                   return (
                     <tr key={student.studentId}>
-                      <td className={styles.fullNameCell}>
-                        <label className={styles.checkboxLabel}>
-                          <input
-                            type="checkbox"
-                            checked={!!selectedStudents[student.studentId]}
-                            onChange={() =>
-                              toggleStudentSelection(student.studentId)
-                            }
-                          />
-                          {student.fullName}
-                        </label>
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={selectedStudents.includes(student.studentId)}
+                          onChange={() =>
+                            handleSelectStudent(student.studentId)
+                          }
+                        />
+                        {student.fullName}
                       </td>
                       {Array(4)
                         .fill(" ")
                         .map((_, idx) => {
                           const estimationKey = `estimation${idx + 1}`;
+                          const commentKey = `coment${idx + 1}`;
                           const value = record[estimationKey] || "";
 
                           return (
@@ -201,11 +247,10 @@ function ThemeDetails() {
                               className={`${styles.selectCell} ${getScoreClass(
                                 value
                               )}`}
+                              title={record[commentKey] || ""}
                             >
                               <select
-                                className={`${
-                                  styles.scoreSelect
-                                } ${getScoreClass(value)}`}
+                                className={styles.scoreSelect}
                                 value={value}
                                 onChange={(e) =>
                                   handleScoreChange(
@@ -231,29 +276,29 @@ function ThemeDetails() {
                 })
               ) : (
                 <tr>
-                  <td colSpan="5">Студенты не найдены</td>
+                  <td colSpan="6">Нет студентов для отображения</td>
                 </tr>
               )}
             </tbody>
           </table>
         </div>
 
-        <div className={styles.actions}>
+        <div className={styles.bulkActions}>
           <select
-            className={styles.columnSelect}
             value={selectedColumn}
             onChange={(e) => setSelectedColumn(e.target.value)}
+            className={styles.columnSelect}
           >
-            <option value="estimation1">Столбец 1</option>
-            <option value="estimation2">Столбец 2</option>
-            <option value="estimation3">Столбец 3</option>
-            <option value="estimation4">Столбец 4</option>
+            <option value="estimation1">Оценка 1</option>
+            <option value="estimation2">Оценка 2</option>
+            <option value="estimation3">Оценка 3</option>
+            <option value="estimation4">Оценка 4</option>
           </select>
           <select
+            value={selectedScore}
+            onChange={(e) => setSelectedScore(e.target.value)}
             className={styles.columnSelect}
-            onChange={(e) => applyScoreToSelected(e.target.value)}
           >
-            <option value="">Выбрать оценку</option>
             <option value="5">5</option>
             <option value="4">4</option>
             <option value="3">3</option>
@@ -261,10 +306,39 @@ function ThemeDetails() {
             <option value="н">Н</option>
             <option value="б">Б</option>
           </select>
+          <button onClick={handleBulkApply} className={styles.button}>
+            Применить ко всем выбранным
+          </button>
         </div>
-        <button className={styles.button} onClick={handleSave}>
-          Сохранить
-        </button>
+
+        <div className={styles.saveContainer}>
+          <button onClick={handleSave} className={styles.button}>
+            Сохранить
+          </button>
+        </div>
+
+        {showModal && (
+          <div className={styles.modal}>
+            <div className={styles.modalContent}>
+              <h3>Добавить комментарий</h3>
+              <textarea
+                value={currentComment}
+                onChange={(e) => setCurrentComment(e.target.value)}
+                placeholder="Комментарий..."
+                className={styles.textarea}
+              />
+              <button onClick={handleSaveComment} className={styles.buttonMini}>
+                Сохранить
+              </button>
+              <button
+                onClick={handleCancelComment}
+                className={styles.buttonMini}
+              >
+                Отмена
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
