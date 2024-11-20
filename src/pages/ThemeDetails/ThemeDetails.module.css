@@ -46,7 +46,7 @@ th {
 
 .scoreSelect {
   cursor: pointer;
-  width: 100%;
+  width: 100px;
   height: 100%;
   text-align: center;
   text-align-last: center;
@@ -221,4 +221,16 @@ th {
 .selectCell:hover .tooltip {
   visibility: visible;
   opacity: 1;
+}
+
+.cellContent {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.commentArrow {
+  font-size: 1.2em;
+  cursor: pointer;
 }

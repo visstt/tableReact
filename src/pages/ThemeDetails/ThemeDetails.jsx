@@ -72,12 +72,6 @@ function ThemeDetails() {
   const handleScoreChange = (e, studentId, estimationKey) => {
     const value = e.target.value;
 
-    if (value === "2") {
-      setCurrentStudent(studentId);
-      setCurrentEstimationKey(estimationKey);
-      setShowModal(true);
-    }
-
     setLocalEstimates((prev) => ({
       ...prev,
       [studentId]: {
@@ -85,6 +79,39 @@ function ThemeDetails() {
         [estimationKey]: value,
       },
     }));
+  };
+
+  const handleSetScoreForSelected = () => {
+    setLocalEstimates((prev) => {
+      const updatedEstimates = { ...prev };
+
+      selectedStudents.forEach((studentId) => {
+        if (!updatedEstimates[studentId]) {
+          updatedEstimates[studentId] = {};
+        }
+        updatedEstimates[studentId][selectedColumn] = selectedScore;
+      });
+
+      return updatedEstimates;
+    });
+  };
+
+  const handleSelectStudent = (studentId) => {
+    setSelectedStudents((prev) =>
+      prev.includes(studentId)
+        ? prev.filter((id) => id !== studentId)
+        : [...prev, studentId]
+    );
+  };
+
+  const handleShowCommentModal = (studentId, estimationKey) => {
+    const record = localEstimates[studentId] || {};
+    setCurrentStudent(studentId);
+    setCurrentEstimationKey(estimationKey);
+    setCurrentComment(
+      record[`${estimationKey.replace("estimation", "coment")}`] || ""
+    );
+    setShowModal(true);
   };
 
   const handleSaveComment = () => {
@@ -103,15 +130,6 @@ function ThemeDetails() {
   };
 
   const handleCancelComment = () => {
-    // Удаляем "двойку" из ячейки при отмене
-    setLocalEstimates((prev) => ({
-      ...prev,
-      [currentStudent]: {
-        ...prev[currentStudent],
-        [currentEstimationKey]: "", // Сбрасываем оценку на пустую строку
-      },
-    }));
-
     setShowModal(false);
     setCurrentComment("");
     setCurrentStudent(null);
@@ -147,26 +165,6 @@ function ThemeDetails() {
     } catch {
       toast.error("Ошибка при сохранении оценок!");
     }
-  };
-
-  const handleSelectStudent = (studentId) => {
-    const newSelectedStudents = selectedStudents.includes(studentId)
-      ? selectedStudents.filter((id) => id !== studentId)
-      : [...selectedStudents, studentId];
-
-    setSelectedStudents(newSelectedStudents);
-  };
-
-  const handleBulkApply = () => {
-    selectedStudents.forEach((studentId) => {
-      setLocalEstimates((prev) => ({
-        ...prev,
-        [studentId]: {
-          ...prev[studentId],
-          [selectedColumn]: selectedScore,
-        },
-      }));
-    });
   };
 
   useEffect(() => {
@@ -247,27 +245,41 @@ function ThemeDetails() {
                               className={`${styles.selectCell} ${getScoreClass(
                                 value
                               )}`}
-                              title={record[commentKey] || ""}
                             >
-                              <select
-                                className={styles.scoreSelect}
-                                value={value}
-                                onChange={(e) =>
-                                  handleScoreChange(
-                                    e,
-                                    student.studentId,
-                                    estimationKey
-                                  )
-                                }
-                              >
-                                <option value=""></option>
-                                <option value="5">5</option>
-                                <option value="4">4</option>
-                                <option value="3">3</option>
-                                <option value="2">2</option>
-                                <option value="н">Н</option>
-                                <option value="б">Б</option>
-                              </select>
+                              <div className={styles.cellContent}>
+                                <select
+                                  className={styles.scoreSelect}
+                                  value={value}
+                                  onChange={(e) =>
+                                    handleScoreChange(
+                                      e,
+                                      student.studentId,
+                                      estimationKey
+                                    )
+                                  }
+                                >
+                                  <option value=""></option>
+                                  <option value="5">5</option>
+                                  <option value="4">4</option>
+                                  <option value="3">3</option>
+                                  <option value="2">2</option>
+                                  <option value="н">Н</option>
+                                  <option value="б">Б</option>
+                                </select>
+                                {record[commentKey] && (
+                                  <span
+                                    className={styles.commentArrow}
+                                    onClick={() =>
+                                      handleShowCommentModal(
+                                        student.studentId,
+                                        estimationKey
+                                      )
+                                    }
+                                  >
+                                    ↓
+                                  </span>
+                                )}
+                              </div>
                             </td>
                           );
                         })}
@@ -282,22 +294,25 @@ function ThemeDetails() {
             </tbody>
           </table>
         </div>
-
-        <div className={styles.bulkActions}>
+        <div className={styles.selectActions}>
+          <label htmlFor="columnSelect">Столбец:</label>
           <select
+            id="columnSelect"
             value={selectedColumn}
             onChange={(e) => setSelectedColumn(e.target.value)}
-            className={styles.columnSelect}
+            className={styles.scoreSelect}
           >
-            <option value="estimation1">Оценка 1</option>
-            <option value="estimation2">Оценка 2</option>
-            <option value="estimation3">Оценка 3</option>
-            <option value="estimation4">Оценка 4</option>
+            <option value="estimation1">1</option>
+            <option value="estimation2">2</option>
+            <option value="estimation3">3</option>
+            <option value="estimation4">4</option>
           </select>
+          <label htmlFor="scoreSelect">Оценка:</label>
           <select
+            id="scoreSelect"
             value={selectedScore}
             onChange={(e) => setSelectedScore(e.target.value)}
-            className={styles.columnSelect}
+            className={styles.scoreSelect}
           >
             <option value="5">5</option>
             <option value="4">4</option>
@@ -306,8 +321,11 @@ function ThemeDetails() {
             <option value="н">Н</option>
             <option value="б">Б</option>
           </select>
-          <button onClick={handleBulkApply} className={styles.button}>
-            Применить ко всем выбранным
+          <button
+            onClick={handleSetScoreForSelected}
+            className={styles.buttonMini}
+          >
+            Применить
           </button>
         </div>
 
@@ -334,7 +352,7 @@ function ThemeDetails() {
                 onClick={handleCancelComment}
                 className={styles.buttonMini}
               >
-                Отмена
+                Отменить
               </button>
             </div>
           </div>
