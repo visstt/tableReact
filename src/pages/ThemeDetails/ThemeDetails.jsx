@@ -83,6 +83,8 @@ function ThemeDetails() {
     }));
 
     if (value === "2") {
+      setCurrentStudent(studentId); // Устанавливаем текущего студента
+      setCurrentEstimationKey(estimationKey); // Устанавливаем ключ оценки
       setApplyCommentToAll(false);
       setShowModal(true);
     }
@@ -133,6 +135,7 @@ function ThemeDetails() {
       const updatedEstimates = { ...prev };
 
       if (applyCommentToAll) {
+        // Для всех выбранных студентов
         selectedStudents.forEach((studentId) => {
           updatedEstimates[studentId] = {
             ...updatedEstimates[studentId],
@@ -140,19 +143,23 @@ function ThemeDetails() {
               currentComment,
           };
         });
-      } else {
-        const studentId = selectedStudents[0];
-        updatedEstimates[studentId] = {
-          ...updatedEstimates[studentId],
-          [`${selectedColumn.replace("estimation", "coment")}`]: currentComment,
+      } else if (currentStudent) {
+        // Только для одного студента
+        updatedEstimates[currentStudent] = {
+          ...updatedEstimates[currentStudent],
+          [`${currentEstimationKey.replace("estimation", "coment")}`]:
+            currentComment,
         };
       }
 
       return updatedEstimates;
     });
 
+    // Сброс состояния модального окна
     setShowModal(false);
     setCurrentComment("");
+    setCurrentStudent(null);
+    setCurrentEstimationKey("");
   };
 
   const handleCancelComment = () => {
