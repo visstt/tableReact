@@ -71,7 +71,8 @@ function ThemeDetails() {
 
   const handleScoreChange = (e, studentId, estimationKey) => {
     const value = e.target.value;
-
+  
+    // Обновляем локальные оценки
     setLocalEstimates((prev) => ({
       ...prev,
       [studentId]: {
@@ -79,8 +80,13 @@ function ThemeDetails() {
         [estimationKey]: value,
       },
     }));
+  
+    // Если выбрана оценка 2, открываем модальное окно для комментария
+    if (value === "2") {
+      handleShowCommentModal(studentId, estimationKey);
+    }
   };
-
+  
   const handleSetScoreForSelected = () => {
     setLocalEstimates((prev) => {
       const updatedEstimates = { ...prev };
@@ -111,9 +117,9 @@ function ThemeDetails() {
     setCurrentComment(
       record[`${estimationKey.replace("estimation", "coment")}`] || ""
     );
-    setShowModal(true);
+    setShowModal(true); // Открываем модальное окно
   };
-
+  
   const handleSaveComment = () => {
     setLocalEstimates((prev) => ({
       ...prev,
