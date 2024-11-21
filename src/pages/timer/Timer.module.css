@@ -1,0 +1,63 @@
+.timerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: Arial, sans-serif;
+}
+
+.time {
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.button:hover {
+  background-color: #0056b3;
+}
+
+.button:active {
+  background-color: #004080;
+}
+
+.timestamps {
+  width: 100%;
+  max-width: 300px;
+  margin-top: 20px;
+}
+
+.timestamps h2 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.timestamps ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.timestamps li {
+  background-color: #f8f9fa;
+  padding: 5px 10px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  margin-bottom: 5px;
+  font-size: 1.2rem;
+}

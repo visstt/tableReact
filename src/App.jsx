@@ -1,5 +1,10 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Table from "./pages/table/Table";
 import Theme from "./pages/theme/Theme";
 import Class from "./pages/class/Class";
@@ -8,8 +13,26 @@ import Subject from "./pages/subject/Subject";
 import Rating from "./pages/rating/Rating";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Timer from "./pages/timer/Timer";
+import Login from "./pages/auth/Login/Login";
+import { useState, useEffect } from "react";
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  // Проверка токена при загрузке
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  // Компонент для защиты маршрутов
+  const ProtectedRoute = ({ element }) => {
+    return isAuthenticated ? element : <Navigate to="/login" />;
+  };
+
   return (
     <Router>
       <>
@@ -25,12 +48,35 @@ function App() {
           pauseOnHover
         />
         <Routes>
-          <Route path="/theme/:subjectId" element={<Theme />} />
-          <Route path="/table" element={<Table />} />
-          <Route path="/" element={<Class />} />
-          <Route path="/subject" element={<Subject />} />
-          <Route path="/themeDetails" element={<ThemeDetails />} />
-          <Route path="/rating" element={<Rating />} />
+          {/* Открытые маршруты */}
+          <Route path="/login" element={<Login />} />
+
+          {/* Защищённые маршруты */}
+          <Route path="/" element={<ProtectedRoute element={<Class />} />} />
+          <Route
+            path="/theme/:subjectId"
+            element={<ProtectedRoute element={<Theme />} />}
+          />
+          <Route
+            path="/table"
+            element={<ProtectedRoute element={<Table />} />}
+          />
+          <Route
+            path="/subject"
+            element={<ProtectedRoute element={<Subject />} />}
+          />
+          <Route
+            path="/themeDetails"
+            element={<ProtectedRoute element={<ThemeDetails />} />}
+          />
+          <Route
+            path="/rating"
+            element={<ProtectedRoute element={<Rating />} />}
+          />
+          <Route
+            path="/timer"
+            element={<ProtectedRoute element={<Timer />} />}
+          />
         </Routes>
       </>
     </Router>
