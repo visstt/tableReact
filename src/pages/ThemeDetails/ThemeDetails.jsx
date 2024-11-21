@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
 import styles from "./ThemeDetails.module.css";
 import { url } from "../../costants/constants";
+import comment from "../../../public/comment.svg";
 
 function ThemeDetails() {
   const [students, setStudents] = useState([]);
@@ -19,6 +20,7 @@ function ThemeDetails() {
   const [currentStudent, setCurrentStudent] = useState(null);
   const [currentEstimationKey, setCurrentEstimationKey] = useState("");
   const location = useLocation();
+  const [applyCommentToAll, setApplyCommentToAll] = useState(false);
 
   const { classId, className, subjectName, themeName, themeId } =
     Object.fromEntries(new URLSearchParams(location.search));
@@ -71,8 +73,7 @@ function ThemeDetails() {
 
   const handleScoreChange = (e, studentId, estimationKey) => {
     const value = e.target.value;
-  
-    // Обновляем локальные оценки
+
     setLocalEstimates((prev) => ({
       ...prev,
       [studentId]: {
@@ -80,14 +81,16 @@ function ThemeDetails() {
         [estimationKey]: value,
       },
     }));
-  
-    // Если выбрана оценка 2, открываем модальное окно для комментария
+
     if (value === "2") {
-      handleShowCommentModal(studentId, estimationKey);
+      setApplyCommentToAll(false);
+      setShowModal(true);
     }
   };
-  
+
   const handleSetScoreForSelected = () => {
+    const hasSelectedScoreTwo = selectedScore === "2";
+
     setLocalEstimates((prev) => {
       const updatedEstimates = { ...prev };
 
@@ -100,6 +103,11 @@ function ThemeDetails() {
 
       return updatedEstimates;
     });
+
+    if (hasSelectedScoreTwo) {
+      setApplyCommentToAll(true);
+      setShowModal(true);
+    }
   };
 
   const handleSelectStudent = (studentId) => {
@@ -119,20 +127,32 @@ function ThemeDetails() {
     );
     setShowModal(true); // Открываем модальное окно
   };
-  
+
   const handleSaveComment = () => {
-    setLocalEstimates((prev) => ({
-      ...prev,
-      [currentStudent]: {
-        ...prev[currentStudent],
-        [`${currentEstimationKey.replace("estimation", "coment")}`]:
-          currentComment,
-      },
-    }));
+    setLocalEstimates((prev) => {
+      const updatedEstimates = { ...prev };
+
+      if (applyCommentToAll) {
+        selectedStudents.forEach((studentId) => {
+          updatedEstimates[studentId] = {
+            ...updatedEstimates[studentId],
+            [`${selectedColumn.replace("estimation", "coment")}`]:
+              currentComment,
+          };
+        });
+      } else {
+        const studentId = selectedStudents[0];
+        updatedEstimates[studentId] = {
+          ...updatedEstimates[studentId],
+          [`${selectedColumn.replace("estimation", "coment")}`]: currentComment,
+        };
+      }
+
+      return updatedEstimates;
+    });
+
     setShowModal(false);
     setCurrentComment("");
-    setCurrentStudent(null);
-    setCurrentEstimationKey("");
   };
 
   const handleCancelComment = () => {
@@ -282,7 +302,11 @@ function ThemeDetails() {
                                       )
                                     }
                                   >
-                                    ↓
+                                    <img
+                                      src={comment}
+                                      alt="comment"
+                                      className="comment"
+                                    />
                                   </span>
                                 )}
                               </div>
