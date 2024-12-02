@@ -110,20 +110,55 @@ export default function Timer() {
 
   const handleApplyTimestamp = (timestamp) => {
     if (selectedStudent !== null) {
-      const updatedStudents = students.map((student) => {
-        if (student.id === selectedStudent) {
-          return { ...student, timestamp }; // Устанавливаем временную метку для выбранного студента
-        }
-        return student;
-      });
-      setStudents(updatedStudents);
-      console.log(
-        "Применена метка времени",
-        formatTime(timestamp),
-        "для студента:",
-        selectedStudent
+      // Проверка, привязано ли это время к другому студенту
+      const studentWithSameTimestamp = students.find(
+        (student) =>
+          student.timestamp === timestamp && student.id !== selectedStudent
       );
-      console.log("Обновленный список студентов:", updatedStudents); // Проверка обновленного состояния
+
+      if (studentWithSameTimestamp) {
+        // Уведомляем пользователя, что время будет переназначено
+        const confirmReassign = window.confirm(
+          `Это время уже привязано к студенту ${studentWithSameTimestamp.name}. Хотите переназначить его?`
+        );
+
+        if (!confirmReassign) {
+          return; // Если пользователь отказался, выходим из функции
+        }
+
+        // Убираем временную метку у предыдущего студента
+        const updatedStudents = students.map((student) => {
+          if (student.id === studentWithSameTimestamp.id) {
+            return { ...student, timestamp: null }; // Сбрасываем временную метку
+          }
+          if (student.id === selectedStudent) {
+            return { ...student, timestamp }; // Присваиваем новое время выбранному студенту
+          }
+          return student;
+        });
+
+        setStudents(updatedStudents);
+        console.log(
+          `Метка времени ${formatTime(timestamp)} переназначена от студента ${
+            studentWithSameTimestamp.name
+          } студенту с ID: ${selectedStudent}`
+        );
+      } else {
+        // Если нет конфликтов, просто обновляем студента
+        const updatedStudents = students.map((student) => {
+          if (student.id === selectedStudent) {
+            return { ...student, timestamp }; // Устанавливаем временную метку для выбранного студента
+          }
+          return student;
+        });
+
+        setStudents(updatedStudents);
+        console.log(
+          `Применена метка времени ${formatTime(
+            timestamp
+          )} для студента с ID: ${selectedStudent}`
+        );
+      }
     } else {
       alert("Пожалуйста, выберите студента для применения метки времени.");
     }
@@ -187,32 +222,31 @@ export default function Timer() {
       <h1 className={styles.time}>{formatTime(time)}</h1>
       <div className={styles.buttons}>
         <button
-          className={styles.button}
-          onClick={() => {
-            setIsRunning(true);
-            console.log("Таймер запущен.");
-          }}
+          className={`${styles.button} ${styles.largeButton}`}
+          onClick={handleReset}
         >
-          Старт
-        </button>
-        <button
-          className={styles.button}
-          onClick={() => {
-            setIsRunning(false);
-            console.log("Таймер приостановлен.");
-          }}
-        >
-          Пауза
-        </button>
-        <button className={styles.button} onClick={handleReset}>
           Сбросить
         </button>
-        <button className={styles.button} onClick={handleAddTimestamp}>
-          Добавить метку
+        <button
+          className={`${styles.startStopButton} ${
+            isRunning ? styles.stop : styles.start
+          }`}
+          onClick={() => setIsRunning((prev) => !prev)}
+        >
+          {isRunning ? "Стоп" : "Старт"}
         </button>
-        <button className={styles.button} onClick={handleSaveTime}>
+        <button
+          className={`${styles.button} ${styles.largeButton}`}
+          onClick={handleAddTimestamp}
+        >
+          Круг
+        </button>
+        {/* <button
+          className={`${styles.button} ${styles.largeButton}`}
+          onClick={handleSaveTime}
+        >
           Сохранить время
-        </button>
+        </button> */}
       </div>
       <div className={styles.studentTable}>
         <table>
@@ -220,7 +254,6 @@ export default function Timer() {
             <tr>
               <th>Имя</th>
               <th>Метка времени</th>
-              <th>Выбрать</th>
             </tr>
           </thead>
           <tbody>
@@ -230,6 +263,10 @@ export default function Timer() {
                 className={
                   student.id === selectedStudent ? styles.selectedRow : ""
                 }
+                onClick={() => {
+                  setSelectedStudent(student.id);
+                  console.log("Выбран студент:", student.name);
+                }}
               >
                 <td>{student.name}</td>
                 <td>
@@ -237,23 +274,13 @@ export default function Timer() {
                     ? formatTime(student.timestamp)
                     : "Нет метки"}
                 </td>
-                <td>
-                  <button
-                    onClick={() => {
-                      setSelectedStudent(student.id);
-                      console.log("Выбран студент:", student.name);
-                    }}
-                  >
-                    Выбрать
-                  </button>
-                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
       <div className={styles.timestampContainer}>
-        <h2>Добавленные метки:</h2>
+        <h2>Добавленное время:</h2>
         <div className={styles.timestampList}>
           <ul>
             {timestamps.map((timestamp, index) => (

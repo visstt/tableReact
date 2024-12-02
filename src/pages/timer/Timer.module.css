@@ -9,19 +9,56 @@
 }
 
 .time {
-  font-size: 2rem;
-  text-align: center;
+  font-size: 3rem;
   margin-bottom: 20px;
+  color: #333;
 }
 
+.startStopButton {
+  padding: 20px 40px;
+  font-size: 2rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.startStopButton:active {
+  transform: scale(0.95);
+}
+
+.start {
+  background-color: #4caf50;
+  color: white;
+}
+
+.start:hover {
+  background-color: #45a049;
+}
+
+.stop {
+  background-color: #f44336;
+  color: white;
+}
+
+.stop:hover {
+  background-color: #d32f2f;
+}
 .buttons {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   margin-bottom: 20px;
+}
+.grayTimestamp {
+  color: gray;
+  pointer-events: none; /* Делает элемент недоступным для кликов */
 }
 
 .button {
-  padding: 10px 15px;
+  width: 150px;
+  height: 50px;
   border: none;
   border-radius: 5px;
   background-color: #007bff;
