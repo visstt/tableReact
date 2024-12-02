@@ -82,16 +82,9 @@ function ThemeDetails() {
     }
   };
 
-  const handleScoreChange = async (e, studentId, estimationKey) => {
+  const handleScoreChange = (e, studentId, estimationKey) => {
     const value = e.target.value;
 
-    console.log("Изменение оценки:", {
-      studentId,
-      estimationKey,
-      value,
-    });
-
-    // Обновляем локальное состояние для конкретного студента
     setLocalEstimates((prev) => ({
       ...prev,
       [studentId]: {
@@ -100,48 +93,32 @@ function ThemeDetails() {
       },
     }));
 
-    // Подготовка данных для сохранения в базу данных
-    const recordToSave = {
-      recordId: 0, // Замените на актуальный recordId, если он у вас есть
-      studentId: studentId,
-      subjectId: themeDetails.subjectId,
-      themeId: themeId,
-      classId: classId,
-      estimation1: localEstimates[studentId]?.estimation1 || null,
-      estimation2: localEstimates[studentId]?.estimation2 || null,
-      estimation3: localEstimates[studentId]?.estimation3 || null,
-      estimation4: localEstimates[studentId]?.estimation4 || null,
-      coment1: localEstimates[studentId]?.coment1 || null,
-      coment2: localEstimates[studentId]?.coment2 || null,
-      coment3: localEstimates[studentId]?.coment3 || null,
-      coment4: localEstimates[studentId]?.coment4 || null,
-      time: new Date().toISOString(), // Укажите время в нужном формате
-    };
-
-    // Обновляем только измененную оценку в объекте recordToSave
-    recordToSave[estimationKey] = value;
-
-    console.log("Данные для сохранения:", recordToSave);
-
-    try {
-      const response = await axios.post(
-        `${url}/themeJournal/addJournalRecord/${classId}-${themeId}`,
-        [recordToSave]
-      ); // Оберните в массив
-      console.log("Ответ сервера:", response.data);
-      toast.success("Оценка успешно сохранена!");
-    } catch (error) {
-      console.error(
-        "Ошибка при сохранении оценки:",
-        error.response ? error.response.data : error.message
-      );
-      toast.error("Ошибка при сохранении оценки!");
-    }
-
     if (value === "2") {
       setCurrentStudent(studentId); // Устанавливаем текущего студента
       setCurrentEstimationKey(estimationKey); // Устанавливаем ключ оценки
       setApplyCommentToAll(false);
+      setShowModal(true);
+    }
+  };
+
+  const handleSetScoreForSelected = () => {
+    const hasSelectedScoreTwo = selectedScore === "2";
+
+    setLocalEstimates((prev) => {
+      const updatedEstimates = { ...prev };
+
+      selectedStudents.forEach((studentId) => {
+        if (!updatedEstimates[studentId]) {
+          updatedEstimates[studentId] = {};
+        }
+        updatedEstimates[studentId][selectedColumn] = selectedScore;
+      });
+
+      return updatedEstimates;
+    });
+
+    if (hasSelectedScoreTwo) {
+      setApplyCommentToAll(true);
       setShowModal(true);
     }
   };
@@ -473,6 +450,12 @@ function ThemeDetails() {
               ))}
             </div>
           </div>
+        </div>
+
+        <div className={styles.saveContainer}>
+          <button onClick={handleSave} className={styles.button}>
+            Сохранить
+          </button>
         </div>
 
         {showModal && (
