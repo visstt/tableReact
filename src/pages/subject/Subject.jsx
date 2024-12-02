@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import styles from "./Subject.module.css";
-import { url } from "../../costants/constants";
+import styles from "./Subject.module.css"; // Ensure this is your CSS module for Subject styles
+import { url } from "../../costants/constants"; // Ensure the path is correct
+import Sidebar from "../Sidebar/Sidebar"; // Import the Sidebar component
 
 function Subject() {
   const [subjects, setSubjects] = useState([]);
@@ -40,22 +41,49 @@ function Subject() {
 
   return (
     <div className={styles.body}>
-      <div className={styles.container}>
+      <Sidebar />
+      <div className={styles.content}>
         <h2 className={styles.heading}>Предметы для класса: {className}</h2>
         {subjects.map((subject) => (
-          <Link
+          <div
             key={subject.subjectId}
-            to={`/theme/${subject.subjectId}?classId=${classId}&className=${className}&subjectName=${subject.subjectName}`}
+            className={`${styles.subject} ${getSubjectColor(
+              subject.subjectName
+            )}`}
           >
-            <button className={styles.button}>{subject.subjectName}</button>
-          </Link>
+            <Link
+              to={`/theme/${subject.subjectId}?classId=${classId}&className=${className}&subjectName=${subject.subjectName}`}
+              style={{
+                width: "100%",
+                color: "inherit",
+                textDecoration: "none",
+              }} // Ensure link stretches and inherits color
+            >
+              <div className={styles.Subject}>
+                <i className="fas fa-book"></i> {subject.subjectName}
+              </div>
+            </Link>
+          </div>
         ))}
-        <button className={styles.btn} onClick={() => navigate(-1)}>
-          Назад
-        </button>
+      </div>
+      <div className={styles.backArrow}>
+        <i className="fas fa-arrow-left" onClick={() => navigate(-1)}></i>
       </div>
     </div>
   );
 }
+
+// Function to determine the subject card color based on subject name
+const getSubjectColor = (subjectName) => {
+  if (subjectName === "Физкультура") return styles.green;
+  if (subjectName === "Физика") return styles.blue;
+  if (subjectName === "Русский язык") return styles.orange;
+  if (subjectName === "Английский язык") return styles.lightblue;
+  if (subjectName === "Французский язык") return styles.purple;
+  if (subjectName === "Алгебра") return styles.brown;
+  if (subjectName === "Химия") return styles.teal;
+  if (subjectName === "История Российского государства") return styles.red;
+  return styles.default; // Default color if no match
+};
 
 export default Subject;

@@ -1,5 +1,5 @@
 .container {
-  width: 90%;
+  width: 95%;
   margin: auto;
   display: flex;
   flex-direction: column;
@@ -197,4 +197,27 @@ th {
 .commentArrow img {
   width: 30px;
   height: 30px;
+}
+.recordingControls {
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+.audioPlayer {
+  margin-top: 10px;
+}
+
+.buttonMini {
+  margin-top: 5px;
+  padding: 8px 12px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.buttonMini:hover {
+  background-color: #45a049;
 }

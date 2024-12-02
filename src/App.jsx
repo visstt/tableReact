@@ -1,10 +1,12 @@
-import "./App.css";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Navigate,
+  useNavigate,
 } from "react-router-dom";
+import Cookies from "js-cookie"; // Для работы с cookie
+import "./App.css";
 import Table from "./pages/table/Table";
 import Theme from "./pages/theme/Theme";
 import Class from "./pages/class/Class";
@@ -15,24 +17,10 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Timer from "./pages/timer/Timer";
 import Login from "./pages/auth/Login/Login";
-import { useState, useEffect } from "react";
+import VoiceRecorder from "./pages/voiceRecorder/VoiceRecorder";
+import LoginV2 from "./pages/auth/Login/LoginV2";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  // Проверка токена при загрузке
-  useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    if (token) {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  // Компонент для защиты маршрутов
-  const ProtectedRoute = ({ element }) => {
-    return isAuthenticated ? element : <Navigate to="/login" />;
-  };
-
   return (
     <Router>
       <>
@@ -48,39 +36,50 @@ function App() {
           pauseOnHover
         />
         <Routes>
-          {/* Открытые маршруты */}
-          <Route path="/login" element={<Login />} />
-
-          {/* Защищённые маршруты */}
-          <Route path="/" element={<ProtectedRoute element={<Class />} />} />
           <Route
             path="/theme/:subjectId"
-            element={<ProtectedRoute element={<Theme />} />}
+            element={<ProtectedRoute component={Theme} />}
           />
-          <Route
-            path="/table"
-            element={<ProtectedRoute element={<Table />} />}
-          />
+          <Route path="/table" element={<ProtectedRoute component={Table} />} />
+          <Route path="/" element={<ProtectedRoute component={Class} />} />
           <Route
             path="/subject"
-            element={<ProtectedRoute element={<Subject />} />}
+            element={<ProtectedRoute component={Subject} />}
           />
           <Route
             path="/themeDetails"
-            element={<ProtectedRoute element={<ThemeDetails />} />}
+            element={<ProtectedRoute component={ThemeDetails} />}
           />
           <Route
-            path="/rating"
-            element={<ProtectedRoute element={<Rating />} />}
+            path="/rating/:classId/:themeId/:className/:themeName"
+            element={<ProtectedRoute component={Rating} />}
           />
           <Route
-            path="/timer"
-            element={<ProtectedRoute element={<Timer />} />}
+            path="/timer/:classId/:themeId/"
+            element={<ProtectedRoute component={Timer} />}
           />
+          <Route path="/login" element={<Login />} />
+          <Route path="/voice" element={<VoiceRecorder />} />
+          <Route path="/LoginV2" element={<LoginV2 />} />
+
         </Routes>
       </>
     </Router>
   );
 }
+
+// Компонент для защиты маршрутов
+const ProtectedRoute = ({ component: Component }) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = Cookies.get("jwtToken");
+    if (!token) {
+      navigate("/login"); // Перенаправление на login, если токена нет
+    }
+  }, [navigate]);
+
+  return <Component />;
+};
 
 export default App;

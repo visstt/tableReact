@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import styles from "./Class.module.css";
-import { url } from "../../costants/constants";
+import { url } from "../../costants/constants"; // Make sure the path is correct
+import Sidebar from "../Sidebar/Sidebar"; // Import the Sidebar component
 
 function Class() {
   const [classes, setClasses] = useState([]);
@@ -28,21 +29,39 @@ function Class() {
 
   return (
     <div className={styles.body}>
-      <div className={styles.container}>
-        <h1 className={styles.heading}>Выбор класса</h1>
-        {classes.map((classItem) => (
-          <Link
-            key={classItem.classId}
-            to={`/subject?classId=${
-              classItem.classId
-            }&className=${encodeURIComponent(classItem.className)}`}
-          >
-            <button className={styles.button}>{classItem.className}</button>
-          </Link>
-        ))}
+      <Sidebar /> {/* Use the Sidebar component here */}
+      <div className={styles.content}>
+        <div className={styles.classes}>
+          {classes.map((classItem) => (
+            <Link
+              key={classItem.classId}
+              to={`/subject?classId=${
+                classItem.classId
+              }&className=${encodeURIComponent(classItem.className)}`}
+              style={{ textDecoration: "none" }}
+            >
+              <div
+                className={`${styles.classCard} ${getClassColor(
+                  classItem.className
+                )}`}
+              >
+                {classItem.className}
+                <br />
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
+
+// Function to determine the class card color based on class name
+const getClassColor = (className) => {
+  if (className.startsWith("7")) return styles.blue; // Example logic
+  if (className.startsWith("8")) return styles.green;
+  if (className.startsWith("9")) return styles.black;
+  return styles.black; // Default color
+};
 
 export default Class;

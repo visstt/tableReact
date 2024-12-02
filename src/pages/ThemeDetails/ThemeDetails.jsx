@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import styles from "./ThemeDetails.module.css";
 import { url } from "../../costants/constants";
@@ -22,8 +23,17 @@ function ThemeDetails() {
   const location = useLocation();
   const [applyCommentToAll, setApplyCommentToAll] = useState(false);
 
+  const navigate = useNavigate();
+
   const { classId, className, subjectName, themeName, themeId } =
     Object.fromEntries(new URLSearchParams(location.search));
+
+  // Состояния для записи голоса
+  const [isRecording, setIsRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [audioChunks, setAudioChunks] = useState([]);
+  const [audioBlob, setAudioBlob] = useState(null);
+  const [audioURL, setAudioURL] = useState("");
 
   const fetchStudents = async () => {
     try {
@@ -61,6 +71,7 @@ function ThemeDetails() {
           coment2: record.coment2,
           coment3: record.coment3,
           coment4: record.coment4,
+          audioComment: record.audioComment || null, // Сохраняем аудиокомментарий
         };
         return acc;
       }, {});
@@ -141,6 +152,7 @@ function ThemeDetails() {
             ...updatedEstimates[studentId],
             [`${selectedColumn.replace("estimation", "coment")}`]:
               currentComment,
+            audioComment: audioBlob, // Добавляем аудиокомментарий
           };
         });
       } else if (currentStudent) {
@@ -149,6 +161,7 @@ function ThemeDetails() {
           ...updatedEstimates[currentStudent],
           [`${currentEstimationKey.replace("estimation", "coment")}`]:
             currentComment,
+          audioComment: audioBlob, // Добавляем аудиокомментарий
         };
       }
 
@@ -160,6 +173,8 @@ function ThemeDetails() {
     setCurrentComment("");
     setCurrentStudent(null);
     setCurrentEstimationKey("");
+    setAudioBlob(null);
+    setAudioURL("");
   };
 
   const handleCancelComment = () => {
@@ -167,6 +182,8 @@ function ThemeDetails() {
     setCurrentComment("");
     setCurrentStudent(null);
     setCurrentEstimationKey("");
+    setAudioBlob(null);
+    setAudioURL("");
   };
 
   const handleSave = async () => {
@@ -185,6 +202,7 @@ function ThemeDetails() {
         coment2: record.coment2 || null,
         coment3: record.coment3 || null,
         coment4: record.coment4 || null,
+        audioComment: record.audioComment || null, // Сохраняем аудиокомментарий
       };
     });
 
@@ -200,6 +218,49 @@ function ThemeDetails() {
     }
   };
 
+  const handleNavigateToRating = () => {
+    navigate(`/rating/${classId}/${themeId}/${className}/${themeName}`);
+  };
+
+  const handleStopRecording = () => {
+    mediaRecorder.stop();
+    setIsRecording(false);
+  };
+
+  const handleStartRecording = async () => {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const recorder = new MediaRecorder(stream);
+    setMediaRecorder(recorder);
+
+    recorder.ondataavailable = (event) => {
+      setAudioChunks((prev) => [...prev, event.data]);
+    };
+
+    recorder.onstop = () => {
+      const blob = new Blob(audioChunks, { type: "audio/wav" }); // Изменен тип на audio/wav
+      setAudioBlob(blob);
+      setAudioURL(URL.createObjectURL(blob)); // Создаем URL для воспроизведения
+      setAudioChunks([]); // Сбрасываем массив аудиофрагментов
+    };
+
+    recorder.start();
+    setIsRecording(true);
+  };
+  const handleNavigateToTimer = (studentId, studentName) => {
+    navigate(`/timer/${classId}/${themeId}`);
+  };
+  // Обработка ошибок воспроизведения аудио
+  const handleAudioError = (e) => {
+    console.error("Ошибка воспроизведения аудио:", e);
+  };
+
+  // В компоненте <audio> добавляем обработчик ошибок
+  <audio
+    controls
+    src={audioURL}
+    className={styles.audioPlayer}
+    onError={handleAudioError} // Добавлен обработчик ошибок
+  ></audio>;
   useEffect(() => {
     if (themeId) {
       fetchThemeDetails();
@@ -236,6 +297,12 @@ function ThemeDetails() {
         <h2>Тема: {themeName}</h2>
         <h3>Предмет: {subjectName}</h3>
         <h4>Класс: {className}</h4>
+        <button onClick={handleNavigateToRating} className={styles.button}>
+          Рейтинг класса
+        </button>
+        <button onClick={handleNavigateToTimer} className={styles.button}>
+          Бег
+        </button>
       </div>
 
       <div className={styles.content}>
@@ -256,14 +323,22 @@ function ThemeDetails() {
                   return (
                     <tr key={student.studentId}>
                       <td>
-                        <input
-                          type="checkbox"
-                          checked={selectedStudents.includes(student.studentId)}
-                          onChange={() =>
-                            handleSelectStudent(student.studentId)
-                          }
-                        />
-                        {student.fullName}
+                        <div
+                          className={styles.checkboxWrapper}
+                          onClick={() => handleSelectStudent(student.studentId)}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedStudents.includes(
+                              student.studentId
+                            )}
+                            onChange={() =>
+                              handleSelectStudent(student.studentId)
+                            }
+                          />
+                          <span>{student.fullName}</span>
+                        </div>
                       </td>
                       {Array(4)
                         .fill(" ")
@@ -382,6 +457,33 @@ function ThemeDetails() {
                 placeholder="Комментарий..."
                 className={styles.textarea}
               />
+              <div className={styles.recordingControls}>
+                {isRecording ? (
+                  <button
+                    onClick={handleStopRecording}
+                    className={styles.buttonMini}
+                  >
+                    Остановить запись
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleStartRecording}
+                    className={styles.buttonMini}
+                  >
+                    Начать запись
+                  </button>
+                )}
+                {audioURL && (
+                  <audio
+                    controls
+                    src={audioURL}
+                    className={styles.audioPlayer}
+                    onError={(e) =>
+                      console.error("Ошибка воспроизведения аудио:", e)
+                    }
+                  ></audio>
+                )}
+              </div>
               <button onClick={handleSaveComment} className={styles.buttonMini}>
                 Сохранить
               </button>

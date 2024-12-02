@@ -4,8 +4,9 @@ import axios from "axios";
 import Cookies from "js-cookie"; // Для записи токена в cookie
 import styles from "./Login.module.css";
 import { url } from "../../../costants/constants";
+import photo from "./photoLogin.png";
 
-const Login = () => {
+export default function LoginV2() {
   const [formData, setFormData] = useState({
     username: "", // Поле username для удобства работы на клиенте
     password: "",
@@ -51,7 +52,9 @@ const Login = () => {
         {error && <div className={styles.error}>{error}</div>}
 
         <div className={styles.inputGroup}>
-          <label htmlFor="username">Логин</label>
+          <label htmlFor="username">
+            <p>Логин</p>
+          </label>
           <input
             type="text"
             id="username"
@@ -64,7 +67,9 @@ const Login = () => {
         </div>
 
         <div className={styles.inputGroup}>
-          <label htmlFor="password">Пароль</label>
+          <label htmlFor="password">
+            <p>Пароль</p>
+          </label>
           <input
             type="password"
             id="password"
@@ -80,8 +85,9 @@ const Login = () => {
           Войти
         </button>
       </form>
+      <div className={styles.photo}>
+        <img src={photo} alt="photo"  className={styles.photoGroup}/>
+      </div>
     </div>
   );
-};
-
-export default Login;
+}

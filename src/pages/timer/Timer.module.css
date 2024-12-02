@@ -1,25 +1,27 @@
 .timerContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  font-family: Arial, sans-serif;
+  width: 800px;
+  margin: 30px auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .time {
-  font-size: 3rem;
-  font-weight: bold;
-  margin: 20px 0;
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .buttons {
   display: flex;
-  gap: 10px;
+  justify-content: space-between;
   margin-bottom: 20px;
 }
 
 .button {
-  padding: 10px 20px;
-  font-size: 1rem;
+  padding: 10px 15px;
   border: none;
   border-radius: 5px;
   background-color: #007bff;
@@ -32,32 +34,50 @@
   background-color: #0056b3;
 }
 
-.button:active {
-  background-color: #004080;
+.studentTable {
+  margin-bottom: 20px;
 }
 
-.timestamps {
+.studentTable table {
   width: 100%;
-  max-width: 300px;
+  border-collapse: collapse;
+}
+
+.studentTable th,
+.studentTable td {
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.studentTable th {
+  background-color: #f2f2f2;
+}
+
+.timestampList {
   margin-top: 20px;
 }
 
-.timestamps h2 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
-}
-
-.timestamps ul {
+.timestampList ul {
   list-style-type: none;
   padding: 0;
-  margin: 0;
 }
 
-.timestamps li {
-  background-color: #f8f9fa;
-  padding: 5px 10px;
-  border: 1px solid #ddd;
-  border-radius: 3px;
+.timestampList li {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
   margin-bottom: 5px;
-  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.timestampList li:hover {
+  background-color: #e9ecef;
+}
+.selectedRow {
+  background-color: #d1e7dd; /* Светло-зеленый цвет для подсветки */
+}
+.selectedTimestamp {
+  background-color: #cce5ff; /* Светло-голубой цвет для выделенной метки */
 }
