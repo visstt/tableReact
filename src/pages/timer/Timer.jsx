@@ -192,27 +192,35 @@ export default function Timer() {
   };
 
   const handleSaveTime = async () => {
+    // Создаем массив данных для отправки на сервер
     const timeData = students
       .map((student) => ({
-        studentId: student.id,
-        time: student.timestamp !== null ? formatTime(student.timestamp) : null, // Преобразуем в строку
+        studentId: student.id, // ID студента
+        time: student.timestamp !== null ? formatTime(student.timestamp) : null, // Преобразуем метку времени в строку, если она есть
       }))
-      .filter((student) => student.time !== null);
+      .filter((student) => student.time !== null); // Фильтруем студентов, у которых нет метки времени
 
-    console.log("Данные для сохранения:", timeData);
+    console.log("Данные для сохранения:", timeData); // Логируем данные для отладки
+
     try {
+      // Отправляем данные на сервер
       const response = await axios.post(
-        `${url}/themeJournal/addTimeToStudents/${classId}-${themeId}`,
+        `${url}/themeJournal/addTimeToStudents/${classId}-${themeId}`, // URL для API
         timeData
       );
-      console.log("Время успешно сохранено:", response.data);
+      console.log("Время успешно сохранено:", response.data); // Логируем успешный ответ от сервера
+      alert("Время успешно сохранено!"); // Добавляем уведомление о успешном сохранении
     } catch (error) {
+      // Обрабатываем ошибки запроса
       if (error.response) {
-        console.error("Ошибка при сохранении времени:", error.response.data);
+        console.error("Ошибка при сохранении времени:", error.response.data); // Логируем ошибку с сервером
+        alert("Ошибка при сохранении времени: " + error.response.data.message); // Показываем ошибку пользователю
       } else if (error.request) {
-        console.error("Запрос был сделан, но ответа не было:", error.request);
+        console.error("Запрос был сделан, но ответа не было:", error.request); // Логируем ошибку запроса
+        alert("Ошибка сети! Не удалось получить ответ от сервера.");
       } else {
-        console.error("Ошибка:", error.message);
+        console.error("Ошибка:", error.message); // Логируем другие ошибки
+        alert("Произошла ошибка: " + error.message); // Показываем общую ошибку пользователю
       }
     }
   };
@@ -241,12 +249,6 @@ export default function Timer() {
         >
           Круг
         </button>
-        {/* <button
-          className={`${styles.button} ${styles.largeButton}`}
-          onClick={handleSaveTime}
-        >
-          Сохранить время
-        </button> */}
       </div>
       <div className={styles.studentTable}>
         <table>
@@ -302,6 +304,12 @@ export default function Timer() {
           </ul>
         </div>
       </div>
+      <button
+        className={`${styles.button} ${styles.largeButton}`}
+        onClick={handleSaveTime}
+      >
+        Сохранить время
+      </button>
     </div>
   );
 }

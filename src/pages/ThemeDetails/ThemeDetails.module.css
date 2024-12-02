@@ -135,14 +135,14 @@ th {
   justify-content: center;
   width: 200px;
   padding: 15px;
-  background-color: #ffffff;
+  background-color: #007bff;
+  color: #fff;
   border: none;
   border-radius: 25px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   font-size: 18px;
   cursor: pointer;
   text-decoration: none;
-  color: black;
   margin-bottom: 30px;
 }
 

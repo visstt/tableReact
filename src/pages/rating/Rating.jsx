@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import styles from "./Rating.module.css";
@@ -13,6 +13,10 @@ const Rating = () => {
 
   // Извлекаем параметры из URL
   const { classId, className, themeName, themeId } = useParams();
+
+  // Темы для футбола и волейбола
+  const footballThemes = ["Пас", "Приём мяча", "Гол", "Штрафной"];
+  const volleyballThemes = ["Приём", "Защита", "Блок", "Удар"];
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -84,7 +88,7 @@ const Rating = () => {
   }, [classId, themeId]);
 
   const handleRatingChange = (e, studentId, cellIndex) => {
-    const value = e.target.value.replace(/[^+\-]/g, ""); // Разрешаем только плюсы и минусы
+    const value = e.target.value.replace(/[^0-9+\\-]/g, ""); // Разрешаем цифры, плюс и минус
     console.log(
       `Rating changed: studentId=${studentId}, cellIndex=${cellIndex}, value=${value}`
     );
@@ -140,6 +144,23 @@ const Rating = () => {
     }
   };
 
+  const handleSportSelection = (sport) => {
+    if (sport === "football") {
+      setThemes(footballThemes);
+    } else if (sport === "volleyball") {
+      setThemes(volleyballThemes);
+    }
+  };
+
+  const getInputClass = (rating) => {
+    if (rating === "+") {
+      return styles.positiveInput; // класс для зеленого фона
+    } else if (rating === "-") {
+      return styles.negativeInput; // класс для красного фона
+    }
+    return styles.defaultInput; // класс по умолчанию
+  };
+
   if (loading) return <p>Загрузка...</p>;
   if (error) return <p>{error}</p>;
 
@@ -147,6 +168,20 @@ const Rating = () => {
     <div className={styles.container}>
       <h2>Рейтинг класса: {className}</h2>
       <h3>Тема: {themeName}</h3>
+      <div className={styles.buttons}>
+        <button
+          onClick={() => handleSportSelection("football")}
+          className={styles.button}
+        >
+          Футбол
+        </button>
+        <button
+          onClick={() => handleSportSelection("volleyball")}
+          className={styles.button}
+        >
+          Волейбол
+        </button>
+      </div>
       <table className={styles.table}>
         <thead>
           <tr>
@@ -176,7 +211,7 @@ const Rating = () => {
                     onChange={(e) =>
                       handleRatingChange(e, student.studentId, cellIndex)
                     }
-                    className={styles.input}
+                    className={getInputClass(rating)}
                   />
                 </td>
               ))}

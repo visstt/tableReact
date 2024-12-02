@@ -44,16 +44,34 @@ input[type="text"] {
   letter-spacing: 5px;
 }
 .button {
+  background-color: #3358ff;
   justify-content: center;
   width: 200px;
   padding: 15px;
-  background-color: #ffffff;
   border: none;
   border-radius: 25px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   font-size: 18px;
   cursor: pointer;
   text-decoration: none;
-  color: black;
+  color: white;
   margin-bottom: 30px;
+}
+.buttons {
+  margin: 0 auto;
+  width: 50%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.positiveInput {
+  color: green;
+}
+
+.negativeInput {
+  color: red;
+}
+
+.defaultInput {
+  background-color: black;
 }

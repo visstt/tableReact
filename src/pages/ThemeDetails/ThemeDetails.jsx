@@ -301,7 +301,7 @@ function ThemeDetails() {
           Рейтинг класса
         </button>
         <button onClick={handleNavigateToTimer} className={styles.button}>
-          Бег
+          Таймер
         </button>
       </div>
 
