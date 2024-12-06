@@ -55,7 +55,7 @@
 
 .button {
   display: block;
-  padding: 15px;
+  padding: 5px;
   margin: 10px auto;
   border: none;
   border-radius: 15px;
@@ -68,32 +68,9 @@
   width: 90%;
   text-align: start;
 }
-.buttonMini {
-  display: block;
-  padding: 15px;
-  margin: 10px auto;
-  border: none;
-  border-radius: 25px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-size: 18px;
-  cursor: pointer;
-  text-decoration: none;
-  color: white; /* Set text color to white for better contrast */
-  transition: background-color 0.3s; /* Smooth transition for hover effect */
-  background-color: #3b82f6;
-  width: 20%;
-}
-.buttonMini:hover {
-  opacity: 0.9; /* Slightly change opacity on hover */
-}
 
 .button:hover {
   opacity: 0.9; /* Slightly change opacity on hover */
-}
-
-.message {
-  font-size: 18px;
-  color: #666;
 }
 
 li {
@@ -103,22 +80,6 @@ li {
 ul {
   margin: 0;
   padding: 0;
-}
-
-.btn {
-  display: block;
-  width: 90%;
-  max-width: 200px;
-  padding: 15px;
-  margin: 10px auto;
-  background-color: #ffffff;
-  border: none;
-  border-radius: 25px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  font-size: 18px;
-  cursor: pointer;
-  text-decoration: none;
-  color: black;
 }
 
 .theme-blue {

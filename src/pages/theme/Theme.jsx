@@ -4,6 +4,7 @@ import axios from "axios";
 import styles from "./Theme.module.css";
 import { url } from "../../costants/constants"; // Correct the path if needed
 import Sidebar from "../Sidebar/Sidebar"; // Import the Sidebar component
+
 function Theme() {
   const [themes, setThemes] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -62,31 +63,20 @@ function Theme() {
     }
   }, [subjectId]);
 
-  const getThemeClass = (themeName) => {
-    switch (themeName) {
-      case "Физкультура":
-        return styles.theme - physical - education;
-      case "Физика":
-        return styles.theme - physics;
-      case "Русский язык":
-        return styles.theme - russian;
-      case "Английский язык":
-        return styles.theme - english;
-      case "Французский язык":
-        return styles.theme - french;
-      case "Литература":
-        return styles.theme - literature;
-      case "Химия":
-        return styles.theme - chemistry;
-      case "История":
-        return styles.theme - history;
-      default:
-        return "";
-    }
-  };
-
   if (loading) return <p className={styles.message}>Загрузка...</p>;
   if (error) return <p className={styles.message}>{error}</p>;
+
+  // Массив с классами для фона тем
+  const colorClasses = [
+    styles.green,
+    styles.blue,
+    styles.orange,
+    styles.lightblue,
+    styles.purple,
+    styles.brown,
+    styles.teal,
+    styles.red,
+  ];
 
   return (
     <div className={styles.body}>
@@ -94,12 +84,20 @@ function Theme() {
       <div className={styles.container}>
         {themes.length > 0 ? (
           <ul>
-            {themes.map((theme) => (
+            <li>
+              <Link
+                className={styles.buttonMini}
+                to={`/offset?subjectId=${subjectId}&classId=${classId}`} // Измените здесь
+              >
+                Зачеты
+              </Link>
+            </li>
+            {themes.map((theme, index) => (
               <li key={theme.themeId}>
                 <Link
-                  className={`${styles.button} ${getThemeClass(
-                    theme.themeName
-                  )}`}
+                  className={`${styles.button} ${
+                    colorClasses[index % colorClasses.length]
+                  }`}
                   to={`/themeDetails?classId=${classId}&className=${className}&subjectName=${subjectName}&themeName=${theme.themeName}&themeId=${theme.themeId}`}
                 >
                   {theme.themeName}

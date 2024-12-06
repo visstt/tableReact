@@ -196,7 +196,7 @@ export default function Timer() {
     const timeData = students
       .map((student) => ({
         studentId: student.id, // ID студента
-        time: student.timestamp !== null ? formatTime(student.timestamp) : null, // Преобразуем метку времени в строку, если она есть
+        time: student.timestamp !== null ? student.timestamp : null, // Время или null, если метки нет
       }))
       .filter((student) => student.time !== null); // Фильтруем студентов, у которых нет метки времени
 
@@ -250,60 +250,64 @@ export default function Timer() {
           Круг
         </button>
       </div>
-      <div className={styles.studentTable}>
-        <table>
-          <thead>
-            <tr>
-              <th>Имя</th>
-              <th>Метка времени</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map((student) => (
-              <tr
-                key={student.id}
-                className={
-                  student.id === selectedStudent ? styles.selectedRow : ""
-                }
-                onClick={() => {
-                  setSelectedStudent(student.id);
-                  console.log("Выбран студент:", student.name);
-                }}
-              >
-                <td>{student.name}</td>
-                <td>
-                  {student.timestamp !== null
-                    ? formatTime(student.timestamp)
-                    : "Нет метки"}
-                </td>
+
+      <div className={styles.container}>
+        <div className={styles.studentTable}>
+          <table>
+            <thead>
+              <tr>
+                <th>Имя</th>
+                <th>Метка времени</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <div className={styles.timestampContainer}>
-        <h2>Добавленное время:</h2>
-        <div className={styles.timestampList}>
-          <ul>
-            {timestamps.map((timestamp, index) => (
-              <li
-                key={index}
-                onClick={() => {
-                  handleToggleTimestampSelection(timestamp);
-                  handleApplyTimestamp(timestamp);
-                }}
-                className={
-                  selectedTimestamps.includes(timestamp)
-                    ? styles.selectedTimestamp
-                    : ""
-                }
-              >
-                {formatTime(timestamp)}
-              </li>
-            ))}
-          </ul>
+            </thead>
+            <tbody>
+              {students.map((student) => (
+                <tr
+                  key={student.id}
+                  className={
+                    student.id === selectedStudent ? styles.selectedRow : ""
+                  }
+                  onClick={() => {
+                    setSelectedStudent(student.id);
+                    console.log("Выбран студент:", student.name);
+                  }}
+                >
+                  <td>{student.name}</td>
+                  <td>
+                    {student.timestamp !== null
+                      ? formatTime(student.timestamp)
+                      : "Нет метки"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className={styles.savedTimeContainer}>
+          <div className={styles.timestampList}>
+            <ul>
+              {timestamps.map((timestamp, index) => (
+                <li
+                  key={index}
+                  onClick={() => {
+                    handleToggleTimestampSelection(timestamp);
+                    handleApplyTimestamp(timestamp);
+                  }}
+                  className={
+                    selectedTimestamps.includes(timestamp)
+                      ? styles.selectedTimestamp
+                      : ""
+                  }
+                >
+                  {formatTime(timestamp)}
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </div>
+
       <button
         className={`${styles.button} ${styles.largeButton}`}
         onClick={handleSaveTime}

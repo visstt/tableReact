@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import styles from "./Sidebar.module.css"; 
+import styles from "./Sidebar.module.css";
 
 function Sidebar() {
   return (
@@ -8,25 +8,23 @@ function Sidebar() {
       <ul>
         <li>
           <i className="fas fa-book"></i>
-          <Link to="#">Предметы</Link>
+          Предметы
         </li>
         <li>
           <i className="fas fa-graduation-cap"></i>
-          <Link to="#" className={styles.active}>
-            Классы
-          </Link>
+          Классы
         </li>
         <li>
           <i className="fas fa-list"></i>
-          <Link to="#">Темы</Link>
+          Темы
         </li>
         <li>
           <i className="fas fa-chart-bar"></i>
-          <Link to="#">Оценки</Link>
+          Оценки
         </li>
         <li>
           <i className="fas fa-trophy"></i>
-          <Link to="#">Рейтинг</Link>
+          Рейтинг
         </li>
       </ul>
     </div>

@@ -71,7 +71,8 @@ function ThemeDetails() {
           coment2: record.coment2,
           coment3: record.coment3,
           coment4: record.coment4,
-          audioComment: record.audioComment || null, // Сохраняем аудиокомментарий
+          audioComment: record.audioComment || null,
+          time: record.time, // Сохраняем аудиокомментарий
         };
         return acc;
       }, {});
@@ -202,7 +203,9 @@ function ThemeDetails() {
         coment2: record.coment2 || null,
         coment3: record.coment3 || null,
         coment4: record.coment4 || null,
-        audioComment: record.audioComment || null, // Сохраняем аудиокомментарий
+        audioComment: record.audioComment || null,
+        time: record.time || null,
+        // Сохраняем аудиокомментарий
       };
     });
 
@@ -314,12 +317,15 @@ function ThemeDetails() {
                 <th colSpan="4" className={styles.center}>
                   Оценки
                 </th>
+                <th>Время</th>
               </tr>
             </thead>
             <tbody>
               {students.length > 0 ? (
                 students.map((student) => {
-                  const record = localEstimates[student.studentId] || {};
+                  const record = localEstimates[student.studentId] || {}; // Получаем оценки и время для студента
+                  const studentTime = record.time || "Не задано"; // Время для студента
+
                   return (
                     <tr key={student.studentId}>
                       <td>
@@ -395,12 +401,13 @@ function ThemeDetails() {
                             </td>
                           );
                         })}
+                      <td>{studentTime}</td>
                     </tr>
                   );
                 })
               ) : (
                 <tr>
-                  <td colSpan="6">Нет студентов для отображения</td>
+                  <td colSpan="7">Нет студентов для отображения</td>
                 </tr>
               )}
             </tbody>
