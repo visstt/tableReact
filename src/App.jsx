@@ -20,6 +20,7 @@ import Login from "./pages/auth/Login/Login";
 import VoiceRecorder from "./pages/voiceRecorder/VoiceRecorder";
 import LoginV2 from "./pages/auth/Login/LoginV2";
 import Offset from "./pages/offset/Offset";
+import OffsetTable from "./pages/OffsetTable/OffsetTable";
 
 function App() {
   return (
@@ -62,6 +63,10 @@ function App() {
           <Route
             path="/timer/:classId/:themeId/"
             element={<ProtectedRoute component={Timer} />}
+          />
+          <Route
+            path="/offsetTable"
+            element={<ProtectedRoute component={OffsetTable} />}
           />
           <Route path="/login" element={<Login />} />
           <Route path="/voice" element={<VoiceRecorder />} />

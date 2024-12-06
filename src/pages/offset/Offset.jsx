@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import axios from "axios";
 import styles from "./Offset.module.css";
@@ -14,6 +14,7 @@ export default function Offset() {
   const queryParams = new URLSearchParams(location.search);
   const subjectId = queryParams.get("subjectId");
   const classId = queryParams.get("classId");
+  const className = queryParams.get("className");
 
   useEffect(() => {
     const fetchOffsets = async () => {
@@ -59,14 +60,18 @@ export default function Offset() {
         {offsets.length > 0 ? (
           <ul>
             {offsets.map((offset, index) => (
-              <li
-                key={offset.offsetId}
-                className={`${styles.button} ${
-                  colorClasses[index % colorClasses.length]
-                }`}
+              <Link
+                to={`/offsetTable?classId=${classId}&className=${className}&offsetName=${offset.offsetName}&offsetId=${offset.offsetId}`}
               >
-                <p className={styles.themeItem}>{offset.offsetName}</p>
-              </li>
+                <li
+                  key={offset.offsetId}
+                  className={`${styles.button} ${
+                    colorClasses[index % colorClasses.length]
+                  }`}
+                >
+                  <p className={styles.themeItem}>{offset.offsetName}</p>
+                </li>
+              </Link>
             ))}
           </ul>
         ) : (

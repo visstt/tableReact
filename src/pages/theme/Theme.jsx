@@ -84,25 +84,21 @@ function Theme() {
       <div className={styles.container}>
         {themes.length > 0 ? (
           <ul>
-            <li>
-              <Link
-                className={styles.buttonMini}
-                to={`/offset?subjectId=${subjectId}&classId=${classId}`} // Измените здесь
-              >
-                Зачеты
-              </Link>
-            </li>
+            <Link
+              className={styles.buttonMini}
+              to={`/offset?subjectId=${subjectId}&classId=${classId}&className=${className}&subjectName=${subjectName}`} 
+            >
+              <li>Зачеты</li>
+            </Link>
             {themes.map((theme, index) => (
-              <li key={theme.themeId}>
-                <Link
-                  className={`${styles.button} ${
-                    colorClasses[index % colorClasses.length]
-                  }`}
-                  to={`/themeDetails?classId=${classId}&className=${className}&subjectName=${subjectName}&themeName=${theme.themeName}&themeId=${theme.themeId}`}
-                >
-                  {theme.themeName}
-                </Link>
-              </li>
+              <Link
+                className={`${styles.button} ${
+                  colorClasses[index % colorClasses.length]
+                }`}
+                to={`/themeDetails?classId=${classId}&className=${className}&subjectName=${subjectName}&themeName=${theme.themeName}&themeId=${theme.themeId}`}
+              >
+                <li key={theme.themeId}>{theme.themeName}</li>
+              </Link>
             ))}
           </ul>
         ) : (

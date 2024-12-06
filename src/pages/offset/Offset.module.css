@@ -53,6 +53,10 @@
   opacity: 0.8; /* Эффект при наведении */
 }
 
+a {
+  text-decoration: none;
+}
+
 .button {
   display: block;
   padding: 5px;
