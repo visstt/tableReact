@@ -17,6 +17,7 @@ export default function Offset() {
   const className = queryParams.get("className");
 
   useEffect(() => {
+    console.log("classId:", classId);
     const fetchOffsets = async () => {
       try {
         const response = await axios.get(
@@ -61,10 +62,10 @@ export default function Offset() {
           <ul>
             {offsets.map((offset, index) => (
               <Link
+                key={offset.offsetId}
                 to={`/offsetTable?classId=${classId}&className=${className}&subjectId=${subjectId}&offsetName=${offset.offsetName}&offsetId=${offset.offsetId}`}
               >
                 <li
-                  key={offset.offsetId}
                   className={`${styles.button} ${
                     colorClasses[index % colorClasses.length]
                   }`}

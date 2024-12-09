@@ -60,10 +60,7 @@ function App() {
             path="/rating/:classId/:themeId/:className/:themeName"
             element={<ProtectedRoute component={Rating} />}
           />
-          <Route
-            path="/timer/:classId/:themeId/"
-            element={<ProtectedRoute component={Timer} />}
-          />
+          <Route path="/timer" element={<ProtectedRoute component={Timer} />} />
           <Route
             path="/offsetTable"
             element={<ProtectedRoute component={OffsetTable} />}

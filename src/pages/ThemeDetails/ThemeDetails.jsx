@@ -249,9 +249,7 @@ function ThemeDetails() {
     recorder.start();
     setIsRecording(true);
   };
-  const handleNavigateToTimer = (studentId, studentName) => {
-    navigate(`/timer/${classId}/${themeId}`);
-  };
+
   // Обработка ошибок воспроизведения аудио
   const handleAudioError = (e) => {
     console.error("Ошибка воспроизведения аудио:", e);
@@ -293,7 +291,6 @@ function ThemeDetails() {
 
   if (loading) return <p>Загрузка...</p>;
   if (error) return <p>{error}</p>;
-
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -302,9 +299,6 @@ function ThemeDetails() {
         <h4>Класс: {className}</h4>
         <button onClick={handleNavigateToRating} className={styles.button}>
           Рейтинг класса
-        </button>
-        <button onClick={handleNavigateToTimer} className={styles.button}>
-          Таймер
         </button>
       </div>
 
@@ -317,14 +311,12 @@ function ThemeDetails() {
                 <th colSpan="4" className={styles.center}>
                   Оценки
                 </th>
-                <th>Время</th>
               </tr>
             </thead>
             <tbody>
               {students.length > 0 ? (
                 students.map((student) => {
                   const record = localEstimates[student.studentId] || {}; // Получаем оценки и время для студента
-                  const studentTime = record.time || "Не задано"; // Время для студента
 
                   return (
                     <tr key={student.studentId}>
@@ -401,13 +393,12 @@ function ThemeDetails() {
                             </td>
                           );
                         })}
-                      <td>{studentTime}</td>
                     </tr>
                   );
                 })
               ) : (
                 <tr>
-                  <td colSpan="7">Нет студентов для отображения</td>
+                  <td colSpan="6">Нет студентов для отображения</td>
                 </tr>
               )}
             </tbody>

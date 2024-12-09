@@ -14,7 +14,6 @@ export default function OffsetTable() {
 
   const [students, setStudents] = useState([]);
   const [error, setError] = useState(null);
-  const [grades, setGrades] = useState({}); // Состояние для хранения оценок
 
   const fetchStudents = async () => {
     try {
@@ -26,18 +25,23 @@ export default function OffsetTable() {
       setError("Ошибка при загрузке данных студентов");
     }
   };
+  const handleNavigateToTimer = (studentId, studentName) => {
+    navigate(`/timer?classId=${classId}&offsetId=${offsetId}`);
+  };
 
   useEffect(() => {
     fetchStudents();
+    console.log(`offsetId = ${offsetId}`);
   }, []);
-
-
 
   if (error) return <p className={styles.error}>{error}</p>;
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.heading}>Список студентов для {offsetName}</h2>
+      <h2 className={styles.heading}>Тема: {offsetName}</h2>
+      <button onClick={handleNavigateToTimer} className={styles.button}>
+        Таймер
+      </button>
       <table className={styles.table}>
         <thead>
           <tr>

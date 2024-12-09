@@ -86,7 +86,7 @@ function Theme() {
           <ul>
             <Link
               className={styles.buttonMini}
-              to={`/?subjectId=${subjectId}&offsetclassId=${classId}&className=${className}&subjectName=${subjectName}`} 
+              to={`/offset?subjectId=${subjectId}&classId=${classId}&className=${className}&subjectName=${subjectName}`}
             >
               <li>Зачеты</li>
             </Link>

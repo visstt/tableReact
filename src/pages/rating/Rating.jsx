@@ -10,6 +10,10 @@ const Rating = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saveError, setSaveError] = useState(null); // Ошибка сохранения
+  const [selectedCell, setSelectedCell] = useState({
+    studentId: null,
+    cellIndex: null,
+  }); // Для хранения выбранной ячейки
 
   // Извлекаем параметры из URL
   const { classId, className, themeName, themeId } = useParams();
@@ -153,12 +157,50 @@ const Rating = () => {
   };
 
   const getInputClass = (rating) => {
-    if (rating === "+") {
+    if (rating.includes("+")) {
       return styles.positiveInput; // класс для зеленого фона
-    } else if (rating === "-") {
+    } else if (rating.includes("-")) {
       return styles.negativeInput; // класс для красного фона
     }
     return styles.defaultInput; // класс по умолчанию
+  };
+
+  const handleCellClick = (studentId, cellIndex) => {
+    setSelectedCell({ studentId, cellIndex }); // Сохраняем выбранную ячейку
+    const updatedStudents = students.map((student) => {
+      if (student.studentId === studentId) {
+        const currentRating = student.ratings[cellIndex];
+        const plusCount = (currentRating.match(/\+/g) || []).length; // Считаем количество плюсов
+        if (plusCount < 5) {
+          // Проверяем, меньше ли 5 плюсов
+          const updatedRatings = student.ratings.map(
+            (rating, index) =>
+              index === cellIndex ? currentRating + "+" : rating // Добавляем плюс к существующему значению
+          );
+          return { ...student, ratings: updatedRatings };
+        }
+      }
+      return student;
+    });
+    setStudents(updatedStudents);
+  };
+
+  const removeLastPlus = () => {
+    const { studentId, cellIndex } = selectedCell;
+    if (studentId !== null && cellIndex !== null) {
+      const updatedStudents = students.map((student) => {
+        if (student.studentId === studentId) {
+          const currentRating = student.ratings[cellIndex];
+          const updatedRating = currentRating.replace(/\+$/, ""); // Удаляем последний плюс
+          const updatedRatings = student.ratings.map((rating, index) =>
+            index === cellIndex ? updatedRating : rating
+          );
+          return { ...student, ratings: updatedRatings };
+        }
+        return student;
+      });
+      setStudents(updatedStudents);
+    }
   };
 
   if (loading) return <p>Загрузка...</p>;
@@ -204,7 +246,10 @@ const Rating = () => {
             <tr key={student.studentId}>
               <td>{student.fullName}</td>
               {student.ratings.map((rating, cellIndex) => (
-                <td key={cellIndex}>
+                <td
+                  key={cellIndex}
+                  onClick={() => handleCellClick(student.studentId, cellIndex)}
+                >
                   <input
                     type="text"
                     value={rating}
@@ -219,6 +264,9 @@ const Rating = () => {
           ))}
         </tbody>
       </table>
+      <button onClick={removeLastPlus} className={styles.removeButton}>
+        Убрать +
+      </button>
       <button onClick={saveData} className={styles.button}>
         Сохранить
       </button>

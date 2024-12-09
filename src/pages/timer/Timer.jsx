@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios"; // Импортируем axios для работы с API
 import styles from "./Timer.module.css"; // Импортируем стили
 import { url } from "../../costants/constants"; // Импортируем URL для API
+import { useLocation } from "react-router-dom";
 
 export default function Timer() {
   const [time, setTime] = useState(0);
@@ -11,9 +12,15 @@ export default function Timer() {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [timestamps, setTimestamps] = useState([]);
   const [selectedTimestamps, setSelectedTimestamps] = useState([]);
-  const [timeData, setTimeData] = useState([]); // Новое состояние для временных меток
+  const [timeData, setTimeData] = useState([]);
+  const location = useLocation();
 
-  const { classId, themeId, studentId, studentName } = useParams();
+  const offsetId = new URLSearchParams(location.search).get("offsetId");
+  const classId = new URLSearchParams(location.search).get("classId");
+  // console.log(`offsetId =${offsetId}`);
+  // console.log(`classId =${classId}`);
+
+  const { themeId, studentId, studentName } = useParams();
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -51,27 +58,8 @@ export default function Timer() {
   useEffect(() => {
     const fetchTimestamps = async () => {
       try {
-        const response = await axios.get(`${url}/themeJournal/${themeId}`);
+        const response = await axios.get(`${url}/runJournal/${offsetId}`);
         const timeData = response.data.map((entry) => entry.time); // Предполагается, что каждый объект имеет атрибут time
-        console.log("Временные метки загружены:", timeData); // Логируем полученные временные метки
-        setTimeData(timeData); // Сохраняем временные метки в отдельном состоянии
-      } catch (error) {
-        console.error("Ошибка при загрузке временных меток:", error);
-      }
-    };
-
-    fetchTimestamps();
-  }, [themeId]);
-
-  useEffect(() => {
-    const fetchTimestamps = async () => {
-      try {
-        const response = await axios.get(`${url}/themeJournal/${themeId}`);
-        console.log("Ответ от API:", response.data); // Логируем весь ответ от API
-        const timeData = response.data.map((entry) => {
-          console.log("Временная метка из API:", entry.time); // Логируем каждую временную метку
-          return entry.time;
-        });
         console.log("Временные метки загружены:", timeData); // Логируем полученные временные метки
         setTimeData(timeData); // Сохраняем временные метки в отдельном состоянии
       } catch (error) {
@@ -116,6 +104,7 @@ export default function Timer() {
           student.timestamp === timestamp && student.id !== selectedStudent
       );
 
+      // Если временная метка уже привязана к другому студенту
       if (studentWithSameTimestamp) {
         // Уведомляем пользователя, что время будет переназначено
         const confirmReassign = window.confirm(
@@ -205,7 +194,7 @@ export default function Timer() {
     try {
       // Отправляем данные на сервер
       const response = await axios.post(
-        `${url}/themeJournal/addTimeToStudents/${classId}-${themeId}`, // URL для API
+        `${url}/runJournal/addTimeToStudents/${classId}-${offsetId}`, // URL для API
         timeData
       );
       console.log("Время успешно сохранено:", response.data); // Логируем успешный ответ от сервера

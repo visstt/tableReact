@@ -57,6 +57,20 @@ input[type="text"] {
   color: white;
   margin-bottom: 30px;
 }
+.removeButton {
+  background-color: #e44b4b;
+  justify-content: center;
+  width: 200px;
+  padding: 15px;
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+  margin-bottom: 30px;
+}
 .buttons {
   margin: 0 auto;
   width: 50%;
