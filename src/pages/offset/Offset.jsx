@@ -63,7 +63,7 @@ export default function Offset() {
             {offsets.map((offset, index) => (
               <Link
                 key={offset.offsetId}
-                to={`/offsetTable?classId=${classId}&className=${className}&subjectId=${subjectId}&offsetName=${offset.offsetName}&offsetId=${offset.offsetId}`}
+                to={`/offsetTable?subjectId=${subjectId}&classId=${classId}&className=${className}&subjectId=${subjectId}&offsetName=${offset.offsetName}&offsetId=${offset.offsetId}`}
               >
                 <li
                   className={`${styles.button} ${

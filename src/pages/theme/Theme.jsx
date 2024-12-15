@@ -20,9 +20,7 @@ function Theme() {
 
   const fetchSubjectId = async () => {
     try {
-      const response = await axios.get(
-        `${url}/classSubject/getSubjects/${classId}`
-      );
+      const response = await axios.get(`${url}/subject/getSubjects/${classId}`);
       const subject = response.data.find(
         (subj) => subj.subjectName === subjectName
       );
@@ -95,7 +93,7 @@ function Theme() {
                 className={`${styles.button} ${
                   colorClasses[index % colorClasses.length]
                 }`}
-                to={`/themeDetails?classId=${classId}&className=${className}&subjectName=${subjectName}&themeName=${theme.themeName}&themeId=${theme.themeId}`}
+                to={`/themeDetails?subjectId=${subjectId}&classId=${classId}&className=${className}&subjectName=${subjectName}&themeName=${theme.themeName}&themeId=${theme.themeId}`}
               >
                 <li key={theme.themeId}>{theme.themeName}</li>
               </Link>

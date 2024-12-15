@@ -257,6 +257,7 @@ const Rating = () => {
                       handleRatingChange(e, student.studentId, cellIndex)
                     }
                     className={getInputClass(rating)}
+                    readOnly
                   />
                 </td>
               ))}

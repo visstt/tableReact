@@ -25,7 +25,7 @@ function ThemeDetails() {
 
   const navigate = useNavigate();
 
-  const { classId, className, subjectName, themeName, themeId } =
+  const { classId, className, subjectName, subjectId, themeName, themeId } =
     Object.fromEntries(new URLSearchParams(location.search));
 
   // Состояния для записи голоса
@@ -59,30 +59,37 @@ function ThemeDetails() {
 
   const fetchThemeJournal = async () => {
     try {
+      console.log("Начинаем загрузку данных темы журнала..."); // Лог перед запросом
       const response = await axios.get(`${url}/themeJournal/${themeId}`);
+      console.log("Данные успешно загружены:", response.data); // Лог после успешного получения данных
 
       const initialEstimates = response.data.reduce((acc, record) => {
-        acc[record.studentId] = {
-          estimation1: record.estimation1,
-          estimation2: record.estimation2,
-          estimation3: record.estimation3,
-          estimation4: record.estimation4,
-          coment1: record.coment1,
-          coment2: record.coment2,
-          coment3: record.coment3,
-          coment4: record.coment4,
-          audioComment: record.audioComment || null,
-          time: record.time, // Сохраняем аудиокомментарий
-        };
+        // Проверяем, что studentId существует в объекте student
+        if (record.student && record.student.studentId) {
+          const studentId = record.student.studentId; // Извлекаем studentId
+          acc[studentId] = {
+            estimation1: record.estimation1 || null, // Устанавливаем значение по умолчанию
+            estimation2: record.estimation2 || null,
+            estimation3: record.estimation3 || null,
+            estimation4: record.estimation4 || null,
+            coment1: record.coment1 || null,
+            coment2: record.coment2 || null,
+            coment3: record.coment3 || null,
+            coment4: record.coment4 || null,
+          };
+        } else {
+          console.warn("Отсутствует studentId в записи:", record); // Лог предупреждения
+        }
         return acc;
       }, {});
 
+      console.log("Начальные оценки установлены:", initialEstimates); // Лог после обработки данных
       setLocalEstimates(initialEstimates);
-    } catch {
+    } catch (error) {
+      console.error("Ошибка при загрузке оценок:", error); // Лог ошибки
       setError("Ошибка при загрузке оценок");
     }
   };
-
   const handleScoreChange = (e, studentId, estimationKey) => {
     const value = e.target.value;
 
@@ -192,9 +199,7 @@ function ThemeDetails() {
       const record = localEstimates[student.studentId] || {};
       return {
         studentId: student.studentId,
-        subjectId: themeDetails.subjectId,
-        themeId,
-        classId,
+        subjectId: subjectId,
         estimation1: record.estimation1 || null,
         estimation2: record.estimation2 || null,
         estimation3: record.estimation3 || null,
@@ -203,9 +208,6 @@ function ThemeDetails() {
         coment2: record.coment2 || null,
         coment3: record.coment3 || null,
         coment4: record.coment4 || null,
-        audioComment: record.audioComment || null,
-        time: record.time || null,
-        // Сохраняем аудиокомментарий
       };
     });
 

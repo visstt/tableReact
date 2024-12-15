@@ -13,12 +13,13 @@ export default function Timer() {
   const [timestamps, setTimestamps] = useState([]);
   const [selectedTimestamps, setSelectedTimestamps] = useState([]);
   const [timeData, setTimeData] = useState([]);
+  const [editingTimestamp, setEditingTimestamp] = useState(null);
+  const [newTimestamp, setNewTimestamp] = useState("");
   const location = useLocation();
 
   const offsetId = new URLSearchParams(location.search).get("offsetId");
   const classId = new URLSearchParams(location.search).get("classId");
-  // console.log(`offsetId =${offsetId}`);
-  // console.log(`classId =${classId}`);
+  const subjectId = new URLSearchParams(location.search).get("subjectId");
 
   const { themeId, studentId, studentName } = useParams();
 
@@ -59,9 +60,9 @@ export default function Timer() {
     const fetchTimestamps = async () => {
       try {
         const response = await axios.get(`${url}/runJournal/${offsetId}`);
-        const timeData = response.data.map((entry) => entry.time); // Предполагается, что каждый объект имеет атрибут time
-        console.log("Временные метки загружены:", timeData); // Логируем полученные временные метки
-        setTimeData(timeData); // Сохраняем временные метки в отдельном состоянии
+        const timeData = response.data.map((entry) => entry.time);
+        console.log("Временные метки загружены:", timeData);
+        setTimeData(timeData);
       } catch (error) {
         console.error("Ошибка при загрузке временных меток:", error);
       }
@@ -83,7 +84,7 @@ export default function Timer() {
   }, [isRunning]);
 
   const formatTime = (time) => {
-    if (time === null || time === undefined || isNaN(time)) return "Нет метки"; // Проверка на null, undefined и NaN
+    if (time === null || time === undefined || isNaN(time)) return "Нет метки";
     const milliseconds = `00${time % 1000}`.slice(-3);
     const seconds = `0${Math.floor((time / 1000) % 60)}`.slice(-2);
     const minutes = `0${Math.floor((time / 60000) % 60)}`.slice(-2);
@@ -98,30 +99,26 @@ export default function Timer() {
 
   const handleApplyTimestamp = (timestamp) => {
     if (selectedStudent !== null) {
-      // Проверка, привязано ли это время к другому студенту
       const studentWithSameTimestamp = students.find(
         (student) =>
           student.timestamp === timestamp && student.id !== selectedStudent
       );
 
-      // Если временная метка уже привязана к другому студенту
       if (studentWithSameTimestamp) {
-        // Уведомляем пользователя, что время будет переназначено
         const confirmReassign = window.confirm(
-          `Это время уже привязано к студенту ${studentWithSameTimestamp.name}. Хотите переназначить его?`
+          `Это время уже привязано к студенту ${studentWithSameTimestamp.name}. Хот ите переназначить его?`
         );
 
         if (!confirmReassign) {
-          return; // Если пользователь отказался, выходим из функции
+          return;
         }
 
-        // Убираем временную метку у предыдущего студента
         const updatedStudents = students.map((student) => {
           if (student.id === studentWithSameTimestamp.id) {
-            return { ...student, timestamp: null }; // Сбрасываем временную метку
+            return { ...student, timestamp: null };
           }
           if (student.id === selectedStudent) {
-            return { ...student, timestamp }; // Присваиваем новое время выбранному студенту
+            return { ...student, timestamp };
           }
           return student;
         });
@@ -133,10 +130,9 @@ export default function Timer() {
           } студенту с ID: ${selectedStudent}`
         );
       } else {
-        // Если нет конфликтов, просто обновляем студента
         const updatedStudents = students.map((student) => {
           if (student.id === selectedStudent) {
-            return { ...student, timestamp }; // Устанавливаем временную метку для выбранного студента
+            return { ...student, timestamp };
           }
           return student;
         });
@@ -181,37 +177,52 @@ export default function Timer() {
   };
 
   const handleSaveTime = async () => {
-    // Создаем массив данных для отправки на сервер
     const timeData = students
       .map((student) => ({
-        studentId: student.id, // ID студента
-        time: student.timestamp !== null ? student.timestamp : null, // Время или null, если метки нет
+        studentId: student.id,
+        subjectId: student.subjectId,
+        time: student.timestamp !== null ? student.timestamp : null,
       }))
-      .filter((student) => student.time !== null); // Фильтруем студентов, у которых нет метки времени
+      .filter((student) => student.estimation !== null);
 
-    console.log("Данные для сохранения:", timeData); // Логируем данные для отладки
+    console.log("Данные для сохранения:", timeData);
 
     try {
-      // Отправляем данные на сервер
       const response = await axios.post(
-        `${url}/runJournal/addTimeToStudents/${classId}-${offsetId}`, // URL для API
+        `${url}/runJournal/addTimeToStudents/${classId}-${offsetId}-${subjectId}`,
         timeData
       );
-      console.log("Время успешно сохранено:", response.data); // Логируем успешный ответ от сервера
-      alert("Время успешно сохранено!"); // Добавляем уведомление о успешном сохранении
+      console.log("Время успешно сохранено:", response.data);
+      alert("Время успешно сохранено!");
     } catch (error) {
-      // Обрабатываем ошибки запроса
       if (error.response) {
-        console.error("Ошибка при сохранении времени:", error.response.data); // Логируем ошибку с сервером
-        alert("Ошибка при сохранении времени: " + error.response.data.message); // Показываем ошибку пользователю
+        console.error("Ошибка при сохранении времени:", error.response.data);
+        alert("Ошибка при сохранении времени: " + error.response.data.message);
       } else if (error.request) {
-        console.error("Запрос был сделан, но ответа не было:", error.request); // Логируем ошибку запроса
+        console.error("Запрос был сделан, но ответа не было:", error.request);
         alert("Ошибка сети! Не удалось получить ответ от сервера.");
       } else {
-        console.error("Ошибка:", error.message); // Логируем другие ошибки
-        alert("Произошла ошибка: " + error.message); // Показываем общую ошибку пользователю
+        console.error("Ошибка:", error.message);
+        alert("Произошла ошибка: " + error.message);
       }
     }
+  };
+
+  const handleDoubleClickTimestamp = (student) => {
+    setEditingTimestamp(student.timestamp);
+    setNewTimestamp(formatTime(student.timestamp));
+  };
+
+  const handleUpdateTimestamp = (student) => {
+    const updatedStudents = students.map((s) => {
+      if (s.id === student.id) {
+        return { ...s, timestamp: newTimestamp };
+      }
+      return s;
+    });
+    setStudents(updatedStudents);
+    setEditingTimestamp(null);
+    setNewTimestamp("");
   };
 
   return (
@@ -262,10 +273,19 @@ export default function Timer() {
                   }}
                 >
                   <td>{student.name}</td>
-                  <td>
-                    {student.timestamp !== null
-                      ? formatTime(student.timestamp)
-                      : "Нет метки"}
+                  <td onDoubleClick={() => handleDoubleClickTimestamp(student)}>
+                    {editingTimestamp === student.timestamp ? (
+                      <input
+                        type="text"
+                        value={newTimestamp}
+                        onChange={(e) => setNewTimestamp(e.target.value)}
+                        onBlur={() => handleUpdateTimestamp(student)}
+                      />
+                    ) : student.timestamp !== null ? (
+                      formatTime(student.timestamp)
+                    ) : (
+                      "Нет метки"
+                    )}
                   </td>
                 </tr>
               ))}

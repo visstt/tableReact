@@ -21,7 +21,7 @@ function Subject() {
     const fetchSubjects = async () => {
       try {
         const response = await axios.get(
-          `${url}/classSubject/getSubjects/${classId}`
+          `${url}/subject/getSubjects/${classId}`
         );
         setSubjects(response.data);
       } catch (err) {
@@ -52,7 +52,7 @@ function Subject() {
             )}`}
           >
             <Link
-              to={`/theme/${subject.subjectId}?classId=${classId}&className=${className}&subjectName=${subject.subjectName}`}
+              to={`/theme/subjectId=${subject.subjectId}?classId=${classId}&className=${className}&subjectName=${subject.subjectName}`}
               style={{
                 width: "100%",
                 color: "inherit",
