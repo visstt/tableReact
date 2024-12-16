@@ -22,7 +22,8 @@ function ThemeDetails() {
   const [currentEstimationKey, setCurrentEstimationKey] = useState("");
   const location = useLocation();
   const [applyCommentToAll, setApplyCommentToAll] = useState(false);
-
+  const [theoryText, setTheoryText] = useState("");
+  const [isTheoryVisible, setIsTheoryVisible] = useState(false);
   const navigate = useNavigate();
 
   const { classId, className, subjectName, subjectId, themeName, themeId } =
@@ -44,6 +45,18 @@ function ThemeDetails() {
     } catch {
       setError("Ошибка при загрузке данных студентов");
     }
+  };
+
+  const fetchTheory = async () => {
+    try {
+      const response = await axios.get(`${url}/theory/${themeId}`);
+      setTheoryText(response.data.theoryText); // Устанавливаем текст теории
+    } catch {
+      setError("Ошибка при загрузке теории");
+    }
+  };
+  const toggleTheoryVisibility = () => {
+    setIsTheoryVisible((prev) => !prev); // Переключаем видимость текста теории
   };
 
   const fetchThemeDetails = async () => {
@@ -269,6 +282,7 @@ function ThemeDetails() {
       fetchThemeDetails();
       fetchStudents();
       fetchThemeJournal();
+      fetchTheory();
     }
   }, [themeId]);
 
@@ -303,7 +317,18 @@ function ThemeDetails() {
           Рейтинг класса
         </button>
       </div>
-
+      <div className={styles.theoryBlock}>
+        <h3 onClick={toggleTheoryVisibility} className={styles.theoryTitle}>
+          Теория
+        </h3>
+        <p
+          className={`${styles.theoryText} ${
+            isTheoryVisible ? styles.visible : ""
+          }`}
+        >
+          {theoryText}
+        </p>
+      </div>
       <div className={styles.content}>
         <div className={styles.tableContainer}>
           <table>

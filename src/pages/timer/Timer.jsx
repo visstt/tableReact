@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // Импортируем useNavigate
 import axios from "axios"; // Импортируем axios для работы с API
 import styles from "./Timer.module.css"; // Импортируем стили
 import { url } from "../../costants/constants"; // Импортируем URL для API
@@ -13,15 +13,30 @@ export default function Timer() {
   const [timestamps, setTimestamps] = useState([]);
   const [selectedTimestamps, setSelectedTimestamps] = useState([]);
   const [timeData, setTimeData] = useState([]);
-  const [editingTimestamp, setEditingTimestamp] = useState(null);
-  const [newTimestamp, setNewTimestamp] = useState("");
   const location = useLocation();
+  const navigate = useNavigate(); // Создаем объект navigate
 
   const offsetId = new URLSearchParams(location.search).get("offsetId");
   const classId = new URLSearchParams(location.search).get("classId");
   const subjectId = new URLSearchParams(location.search).get("subjectId");
 
   const { themeId, studentId, studentName } = useParams();
+
+  const handleGoBack = () => {
+    const hasEmptyTimestamps = students.some(
+      (student) => student.timestamp === null
+    );
+    if (hasEmptyTimestamps) {
+      const confirmLeave = window.confirm(
+        "У некоторых студентов нет меток времени. Вы уверены, что хотите покинуть страницу?"
+      );
+      if (confirmLeave) {
+        navigate(-1); // Возвращаемся на предыдущую страницу
+      }
+    } else {
+      navigate(-1); // Возвращаемся на предыдущую страницу
+    }
+  };
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -106,7 +121,7 @@ export default function Timer() {
 
       if (studentWithSameTimestamp) {
         const confirmReassign = window.confirm(
-          `Это время уже привязано к студенту ${studentWithSameTimestamp.name}. Хот ите переназначить его?`
+          `Это время уже привязано к студенту ${studentWithSameTimestamp.name}. Хотите переназначить его?`
         );
 
         if (!confirmReassign) {
@@ -168,7 +183,6 @@ export default function Timer() {
     if (confirmReset) {
       setTime(0);
       setIsRunning(false);
-      setStudents([]);
       setSelectedStudent(null);
       setTimestamps([]);
       setSelectedTimestamps([]);
@@ -183,7 +197,7 @@ export default function Timer() {
         subjectId: student.subjectId,
         time: student.timestamp !== null ? student.timestamp : null,
       }))
-      .filter((student) => student.estimation !== null);
+      .filter((student) => student.time !== null);
 
     console.log("Данные для сохранения:", timeData);
 
@@ -206,23 +220,6 @@ export default function Timer() {
         alert("Произошла ошибка: " + error.message);
       }
     }
-  };
-
-  const handleDoubleClickTimestamp = (student) => {
-    setEditingTimestamp(student.timestamp);
-    setNewTimestamp(formatTime(student.timestamp));
-  };
-
-  const handleUpdateTimestamp = (student) => {
-    const updatedStudents = students.map((s) => {
-      if (s.id === student.id) {
-        return { ...s, timestamp: newTimestamp };
-      }
-      return s;
-    });
-    setStudents(updatedStudents);
-    setEditingTimestamp(null);
-    setNewTimestamp("");
   };
 
   return (
@@ -256,39 +253,34 @@ export default function Timer() {
           <table>
             <thead>
               <tr>
-                <th>Имя</th>
+                <th>Имя </th>
                 <th>Метка времени</th>
               </tr>
             </thead>
             <tbody>
-              {students.map((student) => (
-                <tr
-                  key={student.id}
-                  className={
-                    student.id === selectedStudent ? styles.selectedRow : ""
-                  }
-                  onClick={() => {
-                    setSelectedStudent(student.id);
-                    console.log("Выбран студент:", student.name);
-                  }}
-                >
-                  <td>{student.name}</td>
-                  <td onDoubleClick={() => handleDoubleClickTimestamp(student)}>
-                    {editingTimestamp === student.timestamp ? (
-                      <input
-                        type="text"
-                        value={newTimestamp}
-                        onChange={(e) => setNewTimestamp(e.target.value)}
-                        onBlur={() => handleUpdateTimestamp(student)}
-                      />
-                    ) : student.timestamp !== null ? (
-                      formatTime(student.timestamp)
-                    ) : (
-                      "Нет метки"
-                    )}
-                  </td>
-                </tr>
-              ))}
+              {students
+                .sort((a, b) =>
+                  a.timestamp === null ? -1 : b.timestamp === null ? 1 : 0
+                ) // Сортировка
+                .map((student) => (
+                  <tr
+                    key={student.id}
+                    className={
+                      student.id === selectedStudent ? styles.selectedRow : ""
+                    }
+                    onClick={() => {
+                      setSelectedStudent(student.id);
+                      console.log("Выбран студент:", student.name);
+                    }}
+                  >
+                    <td>{student.name}</td>
+                    <td>
+                      {student.timestamp !== null
+                        ? formatTime(student.timestamp)
+                        : "Нет метки"}
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
@@ -316,13 +308,20 @@ export default function Timer() {
           </div>
         </div>
       </div>
-
-      <button
-        className={`${styles.button} ${styles.largeButton}`}
-        onClick={handleSaveTime}
-      >
-        Сохранить время
-      </button>
+      <div className={styles.btnContainer}>
+        <button
+          className={`${styles.button} ${styles.largeButton}`}
+          onClick={handleSaveTime}
+        >
+          Сохранить время
+        </button>
+        <button
+          className={`${styles.button} ${styles.largeButton}`}
+          onClick={handleGoBack}
+        >
+          Назад
+        </button>
+      </div>
     </div>
   );
 }

@@ -10,6 +10,10 @@ export default function OffsetTable() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const handleGoBack = () => {
+    navigate(-1); // Возвращаемся на предыдущую страницу
+  };
+
   const { classId, className, subjectId, offsetName, offsetId } =
     Object.fromEntries(new URLSearchParams(location.search));
 
@@ -95,6 +99,12 @@ export default function OffsetTable() {
           })}
         </tbody>
       </table>
+      <button
+        className={`${styles.button} ${styles.largeButton}`}
+        onClick={handleGoBack}
+      >
+        Назад
+      </button>
     </div>
   );
 }

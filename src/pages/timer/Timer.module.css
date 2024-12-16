@@ -78,6 +78,10 @@
 .studentTable {
   margin-bottom: 20px;
 }
+.btnContainer {
+  display: flex;
+  gap: 50px;
+}
 
 .studentTable table {
   width: 100%;

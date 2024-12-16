@@ -81,6 +81,34 @@ th {
   margin: 0;
   cursor: pointer;
 }
+.theoryBlock {
+  width: 800px;
+  margin: 20px 0;
+  border: 1px solid #ccc; /* Граница блока */
+  border-radius: 5px; /* Закругленные углы */
+  padding: 10px; /* Отступы внутри блока */
+  background-color: #f9f9f9; /* Цвет фона блока */
+}
+
+.theoryTitle {
+  cursor: pointer; /* Указатель при наведении */
+  font-weight: bold; /* Жирный текст */
+  margin: 0;
+  padding: 5px 0; /* Отступы вокруг заголовка */
+}
+
+.theoryText {
+  margin-top: 10px; /* Отступ сверху для текста теории */
+  color: #333; /* Цвет текста */
+  line-height: 1.5; /* Межстрочный интервал */
+  max-height: 0; /* Начальная высота */
+  overflow: hidden; /* Скрываем переполнение */
+  transition: max-height 0.5s ease-in-out; /* Плавный переход */
+}
+
+.theoryText.visible {
+  max-height: 500px; /* Максимальная высота при раскрытии */
+}
 
 .fullNameCell {
   width: 150px;
