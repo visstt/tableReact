@@ -241,24 +241,6 @@ export default function Timer() {
     setEditingStudentId(null);
   };
 
-  const handleSaveManualTime = () => {
-    const parsedTime = manualTime.split(":");
-    const minutes = parseInt(parsedTime[0]) || 0;
-    const seconds = parseInt(parsedTime[1]) || 0;
-    const milliseconds = parseInt(parsedTime[2]) || 0; // Добавляем миллисекунды
-    const newTimestamp = (minutes * 60 + seconds) * 1000 + milliseconds; // Преобразуем в миллисекунды
-
-    const updatedStudents = students.map((student) => {
-      if (student.id === editingStudentId) {
-        return { ...student, timestamp: newTimestamp };
-      }
-      return student;
-    });
-
-    setStudents(updatedStudents);
-    console.log("Метка времени обновлена :", formatTime(newTimestamp));
-    handleCloseModal();
-  };
   const handleManualTimeChange = (e) => {
     const value = e.target.value.replace(/[^0-9]/g, ""); // Удаляем все нецифровые символы
     let formattedValue = "";
@@ -274,6 +256,32 @@ export default function Timer() {
     }
 
     setManualTime(formattedValue);
+  };
+
+  const handleSaveManualTime = () => {
+    const parsedTime = manualTime.split(":");
+    const minutes = parseInt(parsedTime[0]) || 0;
+    const seconds = parseInt(parsedTime[1]) || 0;
+    const milliseconds = parseInt(parsedTime[2]) || 0; // Добавляем миллисекунды
+
+    // Проверка на максимальные значения
+    if (minutes > 59 || seconds > 59 || milliseconds > 999) {
+      alert("Пожалуйста, введите время в формате не более 59:59:999.");
+      return;
+    }
+
+    const newTimestamp = (minutes * 60 + seconds) * 1000 + milliseconds; // Преобразуем в миллисекунды
+
+    const updatedStudents = students.map((student) => {
+      if (student.id === editingStudentId) {
+        return { ...student, timestamp: newTimestamp };
+      }
+      return student;
+    });
+
+    setStudents(updatedStudents);
+    console.log("Метка времени обновлена :", formatTime(newTimestamp));
+    handleCloseModal();
   };
   return (
     <div className={styles.timerContainer}>
