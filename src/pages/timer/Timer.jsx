@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Импортируем useNavigate
+import { useParams, useNavigate, useLocation } from "react-router-dom"; // Импортируем useNavigate и useLocation
 import axios from "axios"; // Импортируем axios для работы с API
 import styles from "./Timer.module.css"; // Импортируем стили
 import { url } from "../../costants/constants"; // Импортируем URL для API
-import { useLocation } from "react-router-dom";
 
 export default function Timer() {
   const [time, setTime] = useState(0);
@@ -13,8 +12,11 @@ export default function Timer() {
   const [timestamps, setTimestamps] = useState([]);
   const [selectedTimestamps, setSelectedTimestamps] = useState([]);
   const [timeData, setTimeData] = useState([]);
-  const location = useLocation();
+  const location = useLocation(); // Правильное использование useLocation
   const navigate = useNavigate(); // Создаем объект navigate
+  const [modalOpen, setModalOpen] = useState(false);
+  const [manualTime, setManualTime] = useState("");
+  const [editingStudentId, setEditingStudentId] = useState(null); // ID студента, для которого редактируем время
 
   const offsetId = new URLSearchParams(location.search).get("offsetId");
   const classId = new URLSearchParams(location.search).get("classId");
@@ -222,6 +224,45 @@ export default function Timer() {
     }
   };
 
+  const handleOpenModal = (studentId) => {
+    const student = students.find((s) => s.id === studentId);
+    if (student && student.timestamp === null) {
+      setEditingStudentId(studentId);
+      setManualTime(""); // Сбросить поле ввода
+      setModalOpen(true);
+    } else {
+      alert("У этого студента уже есть метка времени.");
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    setManualTime("");
+    setEditingStudentId(null);
+  };
+
+  const handleManualTimeChange = (e) => {
+    setManualTime(e.target.value);
+  };
+
+  const handleSaveManualTime = () => {
+    const parsedTime = manualTime.split(":");
+    const minutes = parseInt(parsedTime[0]) || 0;
+    const seconds = parseInt(parsedTime[1]) || 0;
+    const newTimestamp = (minutes * 60 + seconds) * 1000; // Преобразуем в миллисекунды
+
+    const updatedStudents = students.map((student) => {
+      if (student.id === editingStudentId) {
+        return { ...student, timestamp: newTimestamp };
+      }
+      return student;
+    });
+
+    setStudents(updatedStudents);
+    console.log("Метка времени обновлена :", formatTime(newTimestamp));
+    handleCloseModal();
+  };
+
   return (
     <div className={styles.timerContainer}>
       <h1 className={styles.time}>{formatTime(time)}</h1>
@@ -274,7 +315,11 @@ export default function Timer() {
                     }}
                   >
                     <td>{student.name}</td>
-                    <td>
+                    <td
+                      onClick={() => {
+                        handleOpenModal(student.id); // Передаем ID студента
+                      }}
+                    >
                       {student.timestamp !== null
                         ? formatTime(student.timestamp)
                         : "Нет метки"}
@@ -322,6 +367,22 @@ export default function Timer() {
           Назад
         </button>
       </div>
+
+      {modalOpen && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <h2>Введите время вручную</h2>
+            <input
+              type="text"
+              value={manualTime}
+              onChange={handleManualTimeChange}
+              placeholder="MM:SS"
+            />
+            <button onClick={handleSaveManualTime}>Сохранить</button>
+            <button onClick={handleCloseModal}>Закрыть</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

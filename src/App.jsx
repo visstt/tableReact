@@ -38,10 +38,7 @@ function App() {
           pauseOnHover
         />
         <Routes>
-          <Route
-            path="/theme/:subjectId"
-            element={<ProtectedRoute component={Theme} />}
-          />
+          <Route path="/theme" element={<ProtectedRoute component={Theme} />} />
           <Route path="/table" element={<ProtectedRoute component={Table} />} />
           <Route path="/" element={<ProtectedRoute component={Class} />} />
           <Route

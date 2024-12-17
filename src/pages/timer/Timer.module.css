@@ -215,3 +215,49 @@
 .selectedRow {
   background-color: #d1e7dd; /* Светло-зеленый цвет для подсветки выбранного студента */
 }
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Убедитесь, что модалка выше других элементов */
+}
+
+.modalContent {
+  background-color: white; /* Белый фон для модального окна */
+  padding: 20px;
+  border-radius: 8px; /* Закругленные углы */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Тень для эффекта поднятия */
+  width: 300px; /* Ширина модального окна */
+  text-align: center; /* Центрирование текста */
+}
+
+.modalContent h2 {
+  margin-bottom: 15px; /* Отступ снизу для заголовка */
+}
+
+.modalContent input {
+  width: 100%; /* Полная ширина для поля ввода */
+  padding: 10px; /* Отступ внутри поля ввода */
+  margin-bottom: 15px; /* Отступ снизу для поля ввода */
+  border: 1px solid #ccc; /* Светло-серая рамка */
+  border-radius: 4px; /* Закругленные углы */
+}
+
+.modalContent button {
+  padding: 10px 15px; /* Отступы для кнопок */
+  margin: 5px; /* Отступы между кнопками */
+  border: none; /* Убираем рамку */
+  border-radius: 4px; /* Закругленные углы */
+  cursor: pointer; /* Курсор в виде указателя */
+}
+
+.modalContent button:hover {
+  background-color: #f0f0f0; /* Цвет фона при наведении */
+}

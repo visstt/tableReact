@@ -52,12 +52,12 @@ function Subject() {
             )}`}
           >
             <Link
-              to={`/theme/subjectId=${subject.subjectId}?classId=${classId}&className=${className}&subjectName=${subject.subjectName}`}
+              to={`/theme/?classId=${classId}&className=${className}&subjectName=${subject.subjectName}`}
               style={{
                 width: "100%",
                 color: "inherit",
                 textDecoration: "none",
-              }} // Ensure link stretches and inherits color
+              }}
             >
               <div className={styles.Subject}>
                 <i className="fas fa-book"></i> {subject.subjectName}
