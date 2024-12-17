@@ -241,15 +241,12 @@ export default function Timer() {
     setEditingStudentId(null);
   };
 
-  const handleManualTimeChange = (e) => {
-    setManualTime(e.target.value);
-  };
-
   const handleSaveManualTime = () => {
     const parsedTime = manualTime.split(":");
     const minutes = parseInt(parsedTime[0]) || 0;
     const seconds = parseInt(parsedTime[1]) || 0;
-    const newTimestamp = (minutes * 60 + seconds) * 1000; // Преобразуем в миллисекунды
+    const milliseconds = parseInt(parsedTime[2]) || 0; // Добавляем миллисекунды
+    const newTimestamp = (minutes * 60 + seconds) * 1000 + milliseconds; // Преобразуем в миллисекунды
 
     const updatedStudents = students.map((student) => {
       if (student.id === editingStudentId) {
@@ -262,7 +259,22 @@ export default function Timer() {
     console.log("Метка времени обновлена :", formatTime(newTimestamp));
     handleCloseModal();
   };
+  const handleManualTimeChange = (e) => {
+    const value = e.target.value.replace(/[^0-9]/g, ""); // Удаляем все нецифровые символы
+    let formattedValue = "";
 
+    if (value.length > 0) {
+      formattedValue += value.substring(0, 2); // Первые 2 цифры для минут
+    }
+    if (value.length > 2) {
+      formattedValue += ":" + value.substring(2, 4); // Следующие 2 цифры для секунд
+    }
+    if (value.length > 4) {
+      formattedValue += ":" + value.substring(4, 7); // Следующие 3 цифры для миллисекунд
+    }
+
+    setManualTime(formattedValue);
+  };
   return (
     <div className={styles.timerContainer}>
       <h1 className={styles.time}>{formatTime(time)}</h1>
@@ -376,7 +388,8 @@ export default function Timer() {
               type="text"
               value={manualTime}
               onChange={handleManualTimeChange}
-              placeholder="MM:SS"
+              placeholder="MM:SS:MMM" // Плейсхолдер
+              maxLength={10} // Максимальная длина ввода
             />
             <button onClick={handleSaveManualTime}>Сохранить</button>
             <button onClick={handleCloseModal}>Закрыть</button>
