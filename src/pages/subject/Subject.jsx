@@ -65,9 +65,11 @@ function Subject() {
             </Link>
           </div>
         ))}
-      </div>
-      <div className={styles.backArrow}>
-        <i className="fas fa-arrow-left" onClick={() => navigate(-1)}></i>
+        <div className={styles.backButton}>
+          <button onClick={() => navigate(-1)} className={styles.button}>
+            Назад
+          </button>
+        </div>
       </div>
     </div>
   );

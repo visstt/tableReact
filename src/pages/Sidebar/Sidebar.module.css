@@ -9,7 +9,10 @@
   list-style: none;
   padding: 0;
 }
-
+.sidebar img {
+  width: 30px;
+  margin-right: 10px;
+}
 .sidebar ul li {
   margin: 20px 0;
   display: flex;

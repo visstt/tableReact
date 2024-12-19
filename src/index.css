@@ -1,23 +1,5 @@
-h1,
-h2,
-h3,
-p,
-a,
-button {
-  font-family: Comfortaa;
-}
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 
-/* Fonts */
-@font-face {
-  font-family: "Comfortaa";
-  src: url(./assets/fonts/static/Comfortaa-Bold.ttf);
+body {
+  font-family: "Montserrat";
 }
-@font-face {
-  font-family: "Comfortaa";
-  src: url(./assets/fonts/static/Comfortaa-Light.ttf);
-}
-@font-face {
-  font-family: "Comfortaa";
-  src: url(./assets/fonts/static/Comfortaa-Regular.ttf);
-}
-

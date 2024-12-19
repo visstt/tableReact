@@ -16,15 +16,24 @@ function Sidebar() {
     <div className={styles.sidebar}>
       <ul>
         <li className={getItemClass("/")}>
-          <i className="fas fa-graduation-cap"></i>
+          <img
+            src="https://img.icons8.com/ios-filled/50/000000/classroom.png"
+            alt="Классы"
+          />
           Классы
         </li>
         <li className={getItemClass("/subject")}>
-          <i className="fas fa-book"></i>
+          <img
+            src="https://img.icons8.com/ios-filled/50/000000/book.png"
+            alt="Предметы"
+          />
           Предметы
         </li>
         <li className={getItemClass("/theme")}>
-          <i className="fas fa-list"></i>
+          <img
+            src="https://img.icons8.com/ios-filled/50/000000/list.png"
+            alt="Темы"
+          />
           Темы
         </li>
       </ul>

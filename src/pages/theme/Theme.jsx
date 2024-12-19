@@ -102,8 +102,10 @@ function Theme() {
         ) : (
           <p className={styles.message}>Темы не найдены</p>
         )}
-        <div className={styles.backArrow}>
-          <i className="fas fa-arrow-left" onClick={() => navigate(-1)}></i>
+        <div>
+          <button onClick={() => navigate(-1)} className={styles.backButton}>
+            Назад
+          </button>
         </div>
       </div>
     </div>

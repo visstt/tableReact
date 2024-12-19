@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../Sidebar/Sidebar";
 import axios from "axios";
 import styles from "./Offset.module.css";
@@ -11,6 +11,7 @@ export default function Offset() {
   const [error, setError] = useState(null);
 
   const location = useLocation();
+  const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   const subjectId = queryParams.get("subjectId");
   const classId = queryParams.get("classId");
@@ -78,6 +79,11 @@ export default function Offset() {
         ) : (
           <p className={styles.message}>Зачеты не найдены</p>
         )}
+        <div>
+          <button onClick={() => navigate(-1)} className={styles.backButton}>
+            Назад
+          </button>
+        </div>
       </div>
     </div>
   );

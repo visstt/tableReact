@@ -16,6 +16,28 @@
   margin-bottom: 20px;
   color: #000; /* Optional: Change heading color if needed */
 }
+.backButton {
+  display: flex;
+  justify-content: left;
+}
+.button {
+  padding: 15px;
+  margin: 10px auto;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+  background-color: #3b82f6;
+  transition: background-color 0.3s;
+  width: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: start;
+}
 
 .subject {
   display: flex;
@@ -57,12 +79,4 @@
 }
 .subject.red {
   background-color: #ef4444;
-}
-
-.backArrow {
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
-  font-size: 24px;
-  cursor: pointer;
 }

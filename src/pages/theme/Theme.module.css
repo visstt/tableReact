@@ -52,7 +52,23 @@
 .button:hover {
   opacity: 0.8; /* Эффект при наведении */
 }
-
+.backButton {
+  padding: 15px;
+  margin: 10px auto;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+  transition: background-color 0.3s;
+  width: 10%;
+  display: flex;
+  justify-content: center;
+  text-align: start;
+  background-color: #3b82f6;
+}
 .button {
   display: block;
   padding: 15px;

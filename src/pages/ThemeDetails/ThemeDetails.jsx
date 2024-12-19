@@ -481,6 +481,11 @@ function ThemeDetails() {
           <button onClick={handleSave} className={styles.button}>
             Сохранить
           </button>
+          <div>
+            <button onClick={() => navigate(-1)} className={styles.button}>
+              Назад
+            </button>
+          </div>
         </div>
 
         {showModal && (
@@ -522,12 +527,6 @@ function ThemeDetails() {
               </div>
               <button onClick={handleSaveComment} className={styles.buttonMini}>
                 Сохранить
-              </button>
-              <button
-                onClick={handleCancelComment}
-                className={styles.buttonMini}
-              >
-                Отменить
               </button>
             </div>
           </div>
