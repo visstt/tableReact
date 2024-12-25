@@ -92,7 +92,7 @@ function Theme() {
                 className={`${styles.button} ${
                   colorClasses[index % colorClasses.length]
                 }`}
-                to={`/themeDetails?subjectId=${subjectId}&classId=${classId}&className=${className}&subjectName=${subjectName}&themeName=${theme.themeName}&themeId=${theme.themeId}`}
+                to={`/presence?subjectId=${subjectId}&classId=${classId}&className=${className}&subjectName=${subjectName}&themeName=${theme.themeName}&themeId=${theme.themeId}`}
               >
                 <li key={theme.themeId}>{theme.themeName}</li>
               </Link>

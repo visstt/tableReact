@@ -1,0 +1,29 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  margin: 30px;
+}
+.table {
+  max-width: 500px;
+}
+.width {
+  max-width: 100px;
+  text-align: center;
+}
+.clickedCell {
+  background-color: #ffbe86; /* Цвет фона для ячейки */
+}
+.button {
+  justify-content: center;
+  width: 200px;
+  padding: 15px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 18px;
+  cursor: pointer;
+  text-decoration: none;
+  margin-bottom: 30px;
+}

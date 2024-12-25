@@ -21,6 +21,7 @@ import VoiceRecorder from "./pages/voiceRecorder/VoiceRecorder";
 import LoginV2 from "./pages/auth/Login/LoginV2";
 import Offset from "./pages/offset/Offset";
 import OffsetTable from "./pages/OffsetTable/OffsetTable";
+import Presence from "./pages/presence/Presence";
 
 function App() {
   return (
@@ -52,6 +53,10 @@ function App() {
           <Route
             path="/offset"
             element={<ProtectedRoute component={Offset} />}
+          />
+          <Route
+            path="/presence"
+            element={<ProtectedRoute component={Presence} />}
           />
           <Route
             path="/rating/:classId/:themeId/:className/:themeName"

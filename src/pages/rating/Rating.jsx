@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./Rating.module.css"; // Убедитесь, что путь к стилям правильный
 import { url } from "../../costants/constants";
 
 const Rating = () => {
+  const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [themes, setThemes] = useState(["", "", "", ""]); // Editable themes
   const [loading, setLoading] = useState(true);
@@ -23,6 +24,9 @@ const Rating = () => {
   // Extract parameters from URL
   const { classId, className, themeName, themeId } = useParams();
 
+  const handleBack = () => {
+    navigate(-1); // Функция для возврата на предыдущую страницу
+  };
   // Themes for football and volleyball
   const footballThemes = ["Пас", "Приём мяча", "Гол", "Штрафной"];
   const volleyballThemes = ["Приём", "Защита", "Блок", "Удар"];
@@ -320,6 +324,9 @@ const Rating = () => {
       </button>
       <button onClick={saveData} className={styles.button}>
         Сохранить
+      </button>
+      <button onClick={handleBack} className={styles.button}>
+        Назад
       </button>
       {saveError && <p className={styles.error}>{saveError}</p>}
       <Modal
