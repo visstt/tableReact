@@ -23,6 +23,9 @@ function ThemeDetails() {
   const location = useLocation();
   const [applyCommentToAll, setApplyCommentToAll] = useState(false);
   const [theoryText, setTheoryText] = useState("");
+  const [themeDate, setThemeDate] = useState("");
+  const [isDateInputVisible, setIsDateInputVisible] = useState(false);
+  const [newThemeDate, setNewThemeDate] = useState(themeDate);
   const [isTheoryVisible, setIsTheoryVisible] = useState(false);
   const navigate = useNavigate();
 
@@ -44,6 +47,50 @@ function ThemeDetails() {
       setStudents(response.data);
     } catch {
       setError("Ошибка при загрузке данных студентов");
+    }
+  };
+
+  const fetchAllThemes = async () => {
+    console.log("Запрос на получение всех тем...");
+    try {
+      const response = await axios.get(
+        `${url}/theme/getAllThemes/${subjectId}`
+      );
+      console.log("Данные тем успешно загружены:", response.data);
+
+      const theme = response.data.find((t) => t.themeId === parseInt(themeId)); // Преобразование themeId в число
+      if (theme) {
+        setThemeDate(theme.themeDate);
+        console.log("Установленная дата темы:", theme.themeDate); // Лог для проверки
+      } else {
+        console.warn("Тема не найдена для themeId:", themeId);
+      }
+    } catch (error) {
+      console.error("Ошибка при загрузке тем:", error);
+      setError("Ошибка при загрузке тем");
+    }
+  };
+  const handleUpdateThemeDate = async (date) => {
+    // Преобразуем дату в строку формата YYYY-MM-DD
+    const formattedDate = new Date(date).toISOString().split("T")[0]; // Получаем только дату
+
+    try {
+      const response = await axios.post(`${url}/theme/updateThemeDate`, null, {
+        params: {
+          themeId: themeId, // Убедитесь, что themeId не равен 0
+          themeDate: formattedDate, // Отправляем новую дату в формате YYYY-MM-DD
+        },
+      });
+      if (response.status === 200) {
+        setThemeDate(formattedDate); // Обновляем локальное состояние с новой датой
+        toast.success("Дата темы успешно обновлена!");
+      }
+    } catch (error) {
+      toast.error("Ошибка при обновлении даты темы!");
+      console.error(
+        "Ошибка:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
 
@@ -277,6 +324,7 @@ function ThemeDetails() {
       fetchStudents();
       fetchThemeJournal();
       fetchTheory();
+      fetchAllThemes();
     }
   }, [themeId]);
 
@@ -302,16 +350,36 @@ function ThemeDetails() {
   const handleColumnClick = (estimation) => {
     setSelectedColumn(estimation);
   };
+  const handleDateClick = () => {
+    setIsDateInputVisible(true); // Показываем поле ввода при клике
+  };
 
   if (loading) return <p>Загрузка...</p>;
   if (error) return <p>{error}</p>;
-
+  console.log("themeDate:", themeDate);
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <h2>Тема: {themeName}</h2>
         <h3>Предмет: {subjectName}</h3>
+        <h3 onClick={handleDateClick} className={styles.dateText}>
+          Дата: {themeDate}
+        </h3>
+        {isDateInputVisible && (
+          <input
+            type="date"
+            value={themeDate}
+            onChange={(e) => {
+              const newDate = e.target.value;
+              handleUpdateThemeDate(newDate); // Обновляем дату
+              setThemeDate(newDate); // Обновляем локальное состояние
+            }}
+            onBlur={() => setIsDateInputVisible(false)} // Скрываем поле ввода при потере фокуса
+            className={styles.dateInput}
+          />
+        )}
         <h4>Класс: {className}</h4>
+
         <button onClick={handleNavigateToRating} className={styles.button}>
           Рейтинг класса
         </button>
