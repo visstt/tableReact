@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import styles from "./Rating.module.css";
+import styles from "./Rating.module.css"; // Убедитесь, что путь к стилям правильный
 import { url } from "../../costants/constants";
 
 const Rating = () => {
@@ -14,6 +14,7 @@ const Rating = () => {
     studentId: null,
     cellIndex: null,
   }); // For storing selected cell
+  const [inputMode, setInputMode] = useState("plus"); // Default input mode
 
   // Extract parameters from URL
   const { classId, className, themeName, themeId } = useParams();
@@ -159,8 +160,8 @@ const Rating = () => {
   const getInputClass = (rating) => {
     if (rating.includes("+")) {
       return styles.positiveInput; // Class for green background
-    } else if (rating.includes("-")) {
-      return styles.negativeInput; // Class for red background
+    } else if (rating.includes("⚪")) {
+      return styles.circleInput; // Class for circle input
     }
     return styles.defaultInput; // Default class
   };
@@ -170,12 +171,19 @@ const Rating = () => {
     const updatedStudents = students.map((student) => {
       if (student.studentId === studentId) {
         const currentRating = student.ratings[cellIndex];
-        const plusCount = (currentRating.match(/\+/g) || []).length; // Count plus signs
-        if (plusCount < 5) {
-          // Check if less than 5 plus signs
+        if (inputMode === "plus") {
+          const plusCount = (currentRating.match(/\+/g) || []).length; // Count plus signs
+          if (plusCount < 5) {
+            const updatedRatings = student.ratings.map(
+              (rating, index) =>
+                index === cellIndex ? currentRating + "+" : rating // Add plus to existing value
+            );
+            return { ...student, ratings: updatedRatings };
+          }
+        } else if (inputMode === "circle") {
           const updatedRatings = student.ratings.map(
             (rating, index) =>
-              index === cellIndex ? currentRating + "+" : rating // Add plus to existing value
+              index === cellIndex ? currentRating + "🔴" : rating // Add circle to existing value
           );
           return { ...student, ratings: updatedRatings };
         }
@@ -185,26 +193,14 @@ const Rating = () => {
     setStudents(updatedStudents);
   };
 
-  const removeLastPlus = () => {
-    const { studentId, cellIndex } = selectedCell;
-    if (studentId !== null && cellIndex !== null) {
-      const updatedStudents = students.map((student) => {
-        if (student.studentId === studentId) {
-          const currentRating = student.ratings[cellIndex];
-          const updatedRating = currentRating.replace(/\+$/, ""); // Remove last plus
-          const updatedRatings = student.ratings.map((rating, index) =>
-            index === cellIndex ? updatedRating : rating
-          );
-          return { ...student, ratings: updatedRatings };
-        }
-        return student;
-      });
-      setStudents(updatedStudents);
-    }
+  const toggleInputMode = () => {
+    setInputMode((prevMode) => (prevMode === "plus" ? "circle" : "plus"));
   };
 
   if (loading) return <p>Загрузка...</p>;
   if (error) return <p>{error}</p>;
+
+  // ... остальной код остается без изменений
 
   return (
     <div className={styles.container}>
@@ -265,8 +261,11 @@ const Rating = () => {
           ))}
         </tbody>
       </table>
-      <button onClick={removeLastPlus} className={styles.removeButton}>
-        Убрать +
+      <button
+        onClick={toggleInputMode}
+        className={inputMode === "plus" ? styles.greenButton : styles.redButton}
+      >
+        Переключить режим: {inputMode === "plus" ? "Кружок" : "Плюс"}
       </button>
       <button onClick={saveData} className={styles.button}>
         Сохранить

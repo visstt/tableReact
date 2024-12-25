@@ -353,6 +353,10 @@ function ThemeDetails() {
                       key={index}
                       className={`${styles.columnHeader} ${
                         selectedColumn === estimation ? styles.active : ""
+                      } ${
+                        selectedColumn === estimation
+                          ? styles.selectedColumn
+                          : ""
                       }`}
                       onClick={() => handleColumnClick(estimation)}
                     >
@@ -393,13 +397,17 @@ function ThemeDetails() {
                           const estimationKey = `estimation${idx + 1}`;
                           const commentKey = `coment${idx + 1}`;
                           const value = record[estimationKey] || "";
+                          const isHighlighted =
+                            selectedColumn === estimationKey; // Проверяем, выбран ли столбец
 
                           return (
                             <td
                               key={idx}
                               className={`${styles.selectCell} ${getScoreClass(
                                 value
-                              )}`}
+                              )} ${
+                                isHighlighted ? styles.highlightedColumn : ""
+                              }`} // Добавляем класс подсветки
                             >
                               <div className={styles.cellContent}>
                                 <select
@@ -498,35 +506,14 @@ function ThemeDetails() {
                 placeholder="Комментарий..."
                 className={styles.textarea}
               />
-              <div className={styles.recordingControls}>
-                {isRecording ? (
-                  <button
-                    onClick={handleStopRecording}
-                    className={styles.buttonMini}
-                  >
-                    Остановить запись
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleStartRecording}
-                    className={styles.buttonMini}
-                  >
-                    Начать запись
-                  </button>
-                )}
-                {audioURL && (
-                  <audio
-                    controls
-                    src={audioURL}
-                    className={styles.audioPlayer}
-                    onError={(e) =>
-                      console.error("Ошибка воспроизведения аудио:", e)
-                    }
-                  ></audio>
-                )}
-              </div>
               <button onClick={handleSaveComment} className={styles.buttonMini}>
                 Сохранить
+              </button>
+              <button
+                onClick={handleCancelComment}
+                className={styles.buttonMini}
+              >
+                Отменить
               </button>
             </div>
           </div>

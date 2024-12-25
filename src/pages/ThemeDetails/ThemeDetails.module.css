@@ -122,7 +122,10 @@ th {
   overflow-wrap: break-word;
   white-space: normal;
 }
-
+/* Добавьте этот класс в ваш CSS файл */
+.highlightedColumn {
+  background-color: #e5f4ff; /* Цвет подсветки */
+}
 .buttonScore {
   width: 50px; /* Ширина кнопки */
   height: 50px; /* Высота кнопки */

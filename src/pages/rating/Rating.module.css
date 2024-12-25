@@ -80,6 +80,7 @@ input[type="text"] {
 
 .positiveInput {
   color: green;
+  font-size: 20px;
 }
 
 .negativeInput {
@@ -88,4 +89,25 @@ input[type="text"] {
 
 .defaultInput {
   background-color: black;
+}
+.greenButton {
+  background-color: green;
+  color: white;
+  width: 200px;
+  padding: 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 20px;
+  margin-bottom: 30px;
+}
+
+.redButton {
+  background-color: red;
+  color: white;
+  width: 200px;
+  padding: 20px;
+  font-size: 18px;
+  border: none;
+  border-radius: 20px;
+  margin-bottom: 30px;
 }
