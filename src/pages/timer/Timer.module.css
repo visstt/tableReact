@@ -261,3 +261,63 @@
 .modalContent button:hover {
   background-color: #f0f0f0; /* Цвет фона при наведении */
 }
+
+/*  */
+.modal2 {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+.modalContent2 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white; /* Белый фон для модального окна */
+  padding: 20px;
+  border-radius: 8px; /* Закругленные углы */
+  width: 400px; /* Ширина модального окна */
+  height: 300px;
+  text-align: center; /* Центрирование текста */
+}
+
+.brightButton {
+  background-color: #ff0000; /* Яркий цвет кнопки */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 20px;
+}
+
+.brightButton:hover {
+  background-color: #c10101; /* Темнее при наведении */
+}
+
+.brightButton2 {
+  background-color: #30db5b; /* Яркий цвет кнопки */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-size: 20px;
+}
+
+.brightButton2:hover {
+  background-color: #28c24f; /* Темнее при наведении */
+}
+.btnWrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 50px;
+}

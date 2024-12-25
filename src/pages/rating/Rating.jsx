@@ -6,19 +6,19 @@ import { url } from "../../costants/constants";
 
 const Rating = () => {
   const [students, setStudents] = useState([]);
-  const [themes, setThemes] = useState(["", "", "", ""]); // Темы, которые можно редактировать
+  const [themes, setThemes] = useState(["", "", "", ""]); // Editable themes
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [saveError, setSaveError] = useState(null); // Ошибка сохранения
+  const [saveError, setSaveError] = useState(null); // Save error
   const [selectedCell, setSelectedCell] = useState({
     studentId: null,
     cellIndex: null,
-  }); // Для хранения выбранной ячейки
+  }); // For storing selected cell
 
-  // Извлекаем параметры из URL
+  // Extract parameters from URL
   const { classId, className, themeName, themeId } = useParams();
 
-  // Темы для футбола и волейбола
+  // Themes for football and volleyball
   const footballThemes = ["Пас", "Приём мяча", "Гол", "Штрафной"];
   const volleyballThemes = ["Приём", "Защита", "Блок", "Удар"];
 
@@ -31,7 +31,7 @@ const Rating = () => {
         );
         const updatedStudents = response.data.map((student) => ({
           ...student,
-          ratings: ["", "", "", ""], // Инициализируем пустой массив для оценок
+          ratings: ["", "", "", ""], // Initialize empty array for ratings
         }));
         setStudents(updatedStudents);
       } catch (err) {
@@ -48,7 +48,7 @@ const Rating = () => {
         const response = await axios.get(`${url}/activityJournal/${themeId}`);
         console.log("Activity journal data:", response.data);
 
-        // Обновляем темы и оценки
+        // Update themes and ratings
         if (response.data.length > 0) {
           setThemes([
             response.data[0].theme1 || "",
@@ -60,7 +60,7 @@ const Rating = () => {
           setStudents((prevStudents) =>
             prevStudents.map((student) => {
               const journalEntry = response.data.find(
-                (entry) => entry.studentId === student.studentId
+                (entry) => entry.student.studentId === student.studentId
               );
               if (journalEntry) {
                 return {
@@ -92,7 +92,7 @@ const Rating = () => {
   }, [classId, themeId]);
 
   const handleRatingChange = (e, studentId, cellIndex) => {
-    const value = e.target.value.replace(/[^0-9+\\-]/g, ""); // Разрешаем цифры, плюс и минус
+    const value = e.target.value.replace(/[^0-9+\\-]/g, ""); // Allow numbers, plus and minus
     console.log(
       `Rating changed: studentId=${studentId}, cellIndex=${cellIndex}, value=${value}`
     );
@@ -123,8 +123,8 @@ const Rating = () => {
         studentId: student.studentId,
         classId,
         themeName,
-        subjectId: null, // subjectId как null
-        themeId, // Извлекается из URL
+        subjectId: null,
+        themeId,
         theme1: themes[0],
         theme2: themes[1],
         theme3: themes[2],
@@ -158,24 +158,24 @@ const Rating = () => {
 
   const getInputClass = (rating) => {
     if (rating.includes("+")) {
-      return styles.positiveInput; // класс для зеленого фона
+      return styles.positiveInput; // Class for green background
     } else if (rating.includes("-")) {
-      return styles.negativeInput; // класс для красного фона
+      return styles.negativeInput; // Class for red background
     }
-    return styles.defaultInput; // класс по умолчанию
+    return styles.defaultInput; // Default class
   };
 
   const handleCellClick = (studentId, cellIndex) => {
-    setSelectedCell({ studentId, cellIndex }); // Сохраняем выбранную ячейку
+    setSelectedCell({ studentId, cellIndex }); // Save selected cell
     const updatedStudents = students.map((student) => {
       if (student.studentId === studentId) {
         const currentRating = student.ratings[cellIndex];
-        const plusCount = (currentRating.match(/\+/g) || []).length; // Считаем количество плюсов
+        const plusCount = (currentRating.match(/\+/g) || []).length; // Count plus signs
         if (plusCount < 5) {
-          // Проверяем, меньше ли 5 плюсов
+          // Check if less than 5 plus signs
           const updatedRatings = student.ratings.map(
             (rating, index) =>
-              index === cellIndex ? currentRating + "+" : rating // Добавляем плюс к существующему значению
+              index === cellIndex ? currentRating + "+" : rating // Add plus to existing value
           );
           return { ...student, ratings: updatedRatings };
         }
@@ -191,7 +191,7 @@ const Rating = () => {
       const updatedStudents = students.map((student) => {
         if (student.studentId === studentId) {
           const currentRating = student.ratings[cellIndex];
-          const updatedRating = currentRating.replace(/\+$/, ""); // Удаляем последний плюс
+          const updatedRating = currentRating.replace(/\+$/, ""); // Remove last plus
           const updatedRatings = student.ratings.map((rating, index) =>
             index === cellIndex ? updatedRating : rating
           );

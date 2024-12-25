@@ -55,6 +55,7 @@ function ThemeDetails() {
       setError("Ошибка при загрузке теории");
     }
   };
+
   const toggleTheoryVisibility = () => {
     setIsTheoryVisible((prev) => !prev); // Переключаем видимость текста теории
   };
@@ -103,6 +104,7 @@ function ThemeDetails() {
       setError("Ошибка при загрузке оценок");
     }
   };
+
   const handleScoreChange = (e, studentId, estimationKey) => {
     const value = e.target.value;
 
@@ -122,8 +124,8 @@ function ThemeDetails() {
     }
   };
 
-  const handleSetScoreForSelected = () => {
-    const hasSelectedScoreTwo = selectedScore === "2";
+  const handleSetScoreForSelected = (score) => {
+    const hasSelectedScoreTwo = score === "2";
 
     setLocalEstimates((prev) => {
       const updatedEstimates = { ...prev };
@@ -132,7 +134,7 @@ function ThemeDetails() {
         if (!updatedEstimates[studentId]) {
           updatedEstimates[studentId] = {};
         }
-        updatedEstimates[studentId][selectedColumn] = selectedScore;
+        updatedEstimates[studentId][selectedColumn] = score;
       });
 
       return updatedEstimates;
@@ -265,18 +267,10 @@ function ThemeDetails() {
     setIsRecording(true);
   };
 
-  // Обработка ошибок воспроизведения аудио
   const handleAudioError = (e) => {
     console.error("Ошибка воспроизведения аудио:", e);
   };
 
-  // В компоненте <audio> добавляем обработчик ошибок
-  <audio
-    controls
-    src={audioURL}
-    className={styles.audioPlayer}
-    onError={handleAudioError} // Добавлен обработчик ошибок
-  ></audio>;
   useEffect(() => {
     if (themeId) {
       fetchThemeDetails();
@@ -305,8 +299,13 @@ function ThemeDetails() {
     }
   };
 
+  const handleColumnClick = (estimation) => {
+    setSelectedColumn(estimation);
+  };
+
   if (loading) return <p>Загрузка...</p>;
   if (error) return <p>{error}</p>;
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -339,6 +338,29 @@ function ThemeDetails() {
                   Оценки
                 </th>
               </tr>
+              <tr>
+                {[
+                  "",
+                  "estimation1",
+                  "estimation2",
+                  "estimation3",
+                  "estimation4",
+                ].map((estimation, index) =>
+                  index === 0 ? (
+                    <th key={index}></th> // Пропускаем первую ячейку
+                  ) : (
+                    <th
+                      key={index}
+                      className={`${styles.columnHeader} ${
+                        selectedColumn === estimation ? styles.active : ""
+                      }`}
+                      onClick={() => handleColumnClick(estimation)}
+                    >
+                      Выбрать столбец
+                    </th>
+                  )
+                )}
+              </tr>
             </thead>
             <tbody>
               {students.length > 0 ? (
@@ -347,7 +369,7 @@ function ThemeDetails() {
 
                   return (
                     <tr key={student.studentId}>
-                      <td>
+                      <td className={styles.studentNameCell}>
                         <div
                           className={styles.checkboxWrapper}
                           onClick={() => handleSelectStudent(student.studentId)}
@@ -431,57 +453,35 @@ function ThemeDetails() {
             </tbody>
           </table>
         </div>
-        <div className={styles.selectActions}>
-          <div>
-            <label>Столбец:</label>
-            <div className={styles.buttonGroup}>
-              {["estimation1", "estimation2", "estimation3", "estimation4"].map(
-                (estimation, index) => (
-                  <button
-                    key={index}
-                    className={`${styles.buttonChoose} ${
-                      selectedColumn === estimation ? styles.active : ""
-                    }`}
-                    onClick={() => setSelectedColumn(estimation)}
-                  >
-                    {index + 1}
-                  </button>
-                )
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label>Оценка:</label>
-            <div className={styles.buttonGroup}>
-              {["5", "4", "3", "2", "н", "б"].map((score) => (
-                <button
-                  key={score}
-                  className={`${styles.buttonChoose} ${
-                    selectedScore === score ? styles.active : ""
-                  }`}
-                  onClick={() => {
-                    selectedStudents.forEach((studentId) => {
-                      handleScoreChange(
-                        { target: { value: score } },
-                        studentId,
-                        selectedColumn
-                      );
-                    });
-                  }}
-                >
-                  {score}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
         <div className={styles.saveContainer}>
-          <button onClick={handleSave} className={styles.button}>
-            Сохранить
+          <button
+            onClick={() => handleSetScoreForSelected("5")}
+            className={`${styles.buttonScore} ${styles.score5}`}
+          >
+            5
+          </button>
+          <button
+            onClick={() => handleSetScoreForSelected("4")}
+            className={`${styles.buttonScore} ${styles.score4}`}
+          >
+            4
+          </button>
+          <button
+            onClick={() => handleSetScoreForSelected("3")}
+            className={`${styles.buttonScore} ${styles.score3}`}
+          >
+            3
+          </button>
+          <button
+            onClick={() => handleSetScoreForSelected("2")}
+            className={`${styles.buttonScore} ${styles.score2}`}
+          >
+            2
           </button>
           <div>
+            <button onClick={handleSave} className={styles.button}>
+              Сохранить
+            </button>
             <button onClick={() => navigate(-1)} className={styles.button}>
               Назад
             </button>

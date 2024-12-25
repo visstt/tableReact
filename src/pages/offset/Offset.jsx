@@ -45,7 +45,6 @@ export default function Offset() {
   // Массив с классами для фона зачетов
   const colorClasses = [
     styles.green,
-    styles.blue,
     styles.orange,
     styles.lightblue,
     styles.purple,

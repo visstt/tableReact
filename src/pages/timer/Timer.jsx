@@ -17,6 +17,7 @@ export default function Timer() {
   const [modalOpen, setModalOpen] = useState(false);
   const [manualTime, setManualTime] = useState("");
   const [editingStudentId, setEditingStudentId] = useState(null); // ID студента, для которого редактируем время
+  const [confirmLeave, setConfirmLeave] = useState(false); // Состояние для модального окна подтверждения выхода
 
   const offsetId = new URLSearchParams(location.search).get("offsetId");
   const classId = new URLSearchParams(location.search).get("classId");
@@ -29,15 +30,19 @@ export default function Timer() {
       (student) => student.timestamp === null
     );
     if (hasEmptyTimestamps) {
-      const confirmLeave = window.confirm(
-        "У некоторых студентов нет меток времени. Вы уверены, что хотите покинуть страницу?"
-      );
-      if (confirmLeave) {
-        navigate(-1); // Возвращаемся на предыдущую страницу
-      }
+      setConfirmLeave(true); // Открываем модальное окно подтверждения
     } else {
       navigate(-1); // Возвращаемся на предыдущую страницу
     }
+  };
+
+  const handleLeave = () => {
+    setConfirmLeave(false); // Закрываем модальное окно
+    navigate(-1); // Возвращаемся на предыдущую страницу
+  };
+
+  const handleStay = () => {
+    setConfirmLeave(false); // Закрываем модальное окно
   };
 
   useEffect(() => {
@@ -283,6 +288,7 @@ export default function Timer() {
     console.log("Метка времени обновлена :", formatTime(newTimestamp));
     handleCloseModal();
   };
+
   return (
     <div className={styles.timerContainer}>
       <h1 className={styles.time}>{formatTime(time)}</h1>
@@ -401,6 +407,25 @@ export default function Timer() {
             />
             <button onClick={handleSaveManualTime}>Сохранить</button>
             <button onClick={handleCloseModal}>Закрыть</button>
+          </div>
+        </div>
+      )}
+
+      {confirmLeave && (
+        <div className={styles.modal2}>
+          <div className={styles.modalContent2}>
+            <h2>
+              У некоторых студентов нет меток времени. Вы уверены, что хотите
+              покинуть страницу?
+            </h2>
+            <div className={styles.btnWrapper}>
+              <button onClick={handleStay} className={styles.brightButton2}>
+                Остаться
+              </button>
+              <button onClick={handleLeave} className={styles.brightButton}>
+                Уйти
+              </button>
+            </div>
           </div>
         </div>
       )}

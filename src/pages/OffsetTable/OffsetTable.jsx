@@ -77,22 +77,24 @@ export default function OffsetTable() {
           <tr>
             <th>Имя студента</th>
             <th>Время</th>
+            <th>Оценка</th>
           </tr>
         </thead>
         <tbody>
           {students.map((student) => {
             // Находим соответствующую оценку для студента
             const estimation = estimations.find(
-              (record) => record.student.studentId === student.studentId // Изменено здесь
+              (record) => record.student.studentId === student.studentId
             );
             console.log(
               `Student: ${student.fullName}, Estimation: ${
                 estimation ? estimation.estimation : "Нет данных"
-              }`
+              }, Time: ${estimation ? estimation.time : "Нет данных"}`
             );
             return (
               <tr key={student.studentId}>
                 <td>{student.fullName}</td>
+                <td>{estimation ? estimation.time : "Нет данных"}</td>
                 <td>{estimation ? estimation.estimation : "Нет данных"}</td>
               </tr>
             );

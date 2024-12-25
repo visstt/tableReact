@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useLocation, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./Theme.module.css";
-import { url } from "../../costants/constants"; // Correct the path if needed
-import Sidebar from "../Sidebar/Sidebar"; // Import the Sidebar component
+import { url } from "../../costants/constants";
+import Sidebar from "../Sidebar/Sidebar";
 
 function Theme() {
   const [themes, setThemes] = useState([]);
@@ -67,7 +67,6 @@ function Theme() {
   // Массив с классами для фона тем
   const colorClasses = [
     styles.green,
-    styles.blue,
     styles.orange,
     styles.lightblue,
     styles.purple,
