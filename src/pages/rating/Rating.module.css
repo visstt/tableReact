@@ -111,3 +111,63 @@ input[type="text"] {
   border-radius: 20px;
   margin-bottom: 30px;
 }
+/* Стили для модального окна */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5); /* Полупрозрачный фон */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Убедитесь, что модалка выше других элементов */
+}
+
+.modalContent {
+  background: white; /* Белый фон для модального окна */
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Тень для модального окна */
+  width: 300px; /* Ширина модального окна */
+  text-align: center; /* Центрирование текста */
+}
+
+/* Стили для input в модальном окне */
+.modalContent input[type="text"] {
+  width: 100%; /* Полная ширина */
+  padding: 10px; /* Отступы внутри input */
+  margin: 10px 0; /* Отступы сверху и снизу */
+  border: 1px solid #ccc; /* Светло-серая рамка */
+  border-radius: 4px; /* Закругленные углы */
+  font-size: 16px; /* Размер шрифта */
+  box-sizing: border-box; /* Учет отступов и границ в ширине */
+}
+
+/* Стили для кнопок в модальном окне */
+.modalContent button {
+  background-color: #3358ff; /* Цвет фона кнопки */
+  color: white; /* Цвет текста кнопки */
+  padding: 10px 15px; /* Отступы внутри кнопки */
+  border: none; /* Без рамки */
+  border-radius: 5px; /* Закругленные углы */
+  font-size: 16px; /* Размер шрифта */
+  cursor: pointer; /* Указатель при наведении */
+  margin: 5px; /* Отступы между кнопками */
+  transition: background-color 0.3s; /* Плавный переход цвета фона */
+}
+
+/* Эффект при наведении на кнопки */
+.modalContent button:hover {
+  background-color: #004bb5; /* Темнее при наведении */
+}
+
+/* Стили для кнопки закрытия */
+.modalContent button:last-child {
+  background-color: #e44b4b; /* Красный цвет для кнопки закрытия */
+}
+
+.modalContent button:last-child:hover {
+  background-color: #c0392b; /* Темнее при наведении */
+}

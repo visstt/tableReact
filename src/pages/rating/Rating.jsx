@@ -15,6 +15,10 @@ const Rating = () => {
     cellIndex: null,
   }); // For storing selected cell
   const [inputMode, setInputMode] = useState("plus"); // Default input mode
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentRating, setCurrentRating] = useState("");
+  const [currentStudentId, setCurrentStudentId] = useState(null);
+  const [currentCellIndex, setCurrentCellIndex] = useState(null);
 
   // Extract parameters from URL
   const { classId, className, themeName, themeId } = useParams();
@@ -197,10 +201,53 @@ const Rating = () => {
     setInputMode((prevMode) => (prevMode === "plus" ? "circle" : "plus"));
   };
 
+  const openModal = (studentId, cellIndex) => {
+    const student = students.find((s) => s.studentId === studentId);
+    setCurrentRating(student.ratings[cellIndex]);
+    setCurrentStudentId(studentId);
+    setCurrentCellIndex(cellIndex);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const saveRating = () => {
+    const updatedStudents = students.map((student) => {
+      if (student.studentId === currentStudentId) {
+        const updatedRatings = student.ratings.map((rating, index) =>
+          index === currentCellIndex ? currentRating : rating
+        );
+        return { ...student, ratings: updatedRatings };
+      }
+      return student;
+    });
+    setStudents(updatedStudents);
+    closeModal();
+  };
+
   if (loading) return <p>Загрузка...</p>;
   if (error) return <p>{error}</p>;
 
-  // ... остальной код остается без изменений
+  const Modal = ({ isOpen, onClose, onSave, rating, setRating }) => {
+    if (!isOpen) return null;
+
+    return (
+      <div className={styles.modal}>
+        <div className={styles.modalContent}>
+          <h2>Редактировать рейтинг</h2>
+          <input
+            type="text"
+            value={rating}
+            onChange={(e) => setRating(e.target.value)}
+          />
+          <button onClick={onSave}>Сохранить</button>
+          <button onClick={onClose}>Закрыть</button>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className={styles.container}>
@@ -245,6 +292,10 @@ const Rating = () => {
                 <td
                   key={cellIndex}
                   onClick={() => handleCellClick(student.studentId, cellIndex)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    openModal(student.studentId, cellIndex);
+                  }}
                 >
                   <input
                     type="text"
@@ -271,6 +322,13 @@ const Rating = () => {
         Сохранить
       </button>
       {saveError && <p className={styles.error}>{saveError}</p>}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onSave={saveRating}
+        rating={currentRating}
+        setRating={setCurrentRating}
+      />
     </div>
   );
 };
