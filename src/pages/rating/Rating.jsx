@@ -20,6 +20,7 @@ const Rating = () => {
   const [currentRating, setCurrentRating] = useState("");
   const [currentStudentId, setCurrentStudentId] = useState(null);
   const [currentCellIndex, setCurrentCellIndex] = useState(null);
+  const [longPressTimeout, setLongPressTimeout] = useState(null); // Для долгого нажатия
 
   // Extract parameters from URL
   const { classId, className, themeName, themeId } = useParams();
@@ -27,6 +28,7 @@ const Rating = () => {
   const handleBack = () => {
     navigate(-1); // Функция для возврата на предыдущую страницу
   };
+
   // Themes for football and volleyball
   const footballThemes = ["Пас", "Приём мяча", "Гол", "Штрафной"];
   const volleyballThemes = ["Приём", "Защита", "Блок", "Удар"];
@@ -184,7 +186,7 @@ const Rating = () => {
           if (plusCount < 5) {
             const updatedRatings = student.ratings.map(
               (rating, index) =>
-                index === cellIndex ? currentRating + "+" : rating // Add plus to existing value
+                index === cellIndex ? currentRating + "🟢" : rating // Add plus to existing value
             );
             return { ...student, ratings: updatedRatings };
           }
@@ -229,6 +231,17 @@ const Rating = () => {
     });
     setStudents(updatedStudents);
     closeModal();
+  };
+
+  const handleTouchStart = (studentId, cellIndex) => {
+    const timeout = setTimeout(() => {
+      openModal(studentId, cellIndex);
+    }, 500); // 500 ms for long press
+    setLongPressTimeout(timeout);
+  };
+
+  const handleTouchEnd = () => {
+    clearTimeout(longPressTimeout); // Clear timer if press was short
   };
 
   if (loading) return <p>Загрузка...</p>;
@@ -300,6 +313,10 @@ const Rating = () => {
                     e.preventDefault();
                     openModal(student.studentId, cellIndex);
                   }}
+                  onTouchStart={() =>
+                    handleTouchStart(student.studentId, cellIndex)
+                  }
+                  onTouchEnd={handleTouchEnd}
                 >
                   <input
                     type="text"
