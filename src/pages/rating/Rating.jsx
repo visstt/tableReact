@@ -184,7 +184,7 @@ const Rating = () => {
           if (plusCount < 5) {
             const updatedRatings = student.ratings.map(
               (rating, index) =>
-                index === cellIndex ? currentRating + "+" : rating // Add plus to existing value
+                index === cellIndex ? currentRating + "🟢" : rating // Add plus to existing value
             );
             return { ...student, ratings: updatedRatings };
           }

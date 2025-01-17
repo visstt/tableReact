@@ -444,8 +444,7 @@ function ThemeDetails() {
                       <td className={styles.studentNameCell}>
                         <div
                           className={styles.checkboxWrapper}
-                          onClick={() => handleSelectStudent(student.studentId)}
-                          style={{ cursor: "pointer" }}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           <input
                             type="checkbox"
@@ -456,7 +455,13 @@ function ThemeDetails() {
                               handleSelectStudent(student.studentId)
                             }
                           />
-                          <span>{student.fullName}</span>
+                          <span
+                            onClick={() =>
+                              handleSelectStudent(student.studentId)
+                            }
+                          >
+                            {student.fullName}
+                          </span>
                         </div>
                       </td>
                       {Array(4)
