@@ -22,6 +22,7 @@ import LoginV2 from "./pages/auth/Login/LoginV2";
 import Offset from "./pages/offset/Offset";
 import OffsetTable from "./pages/OffsetTable/OffsetTable";
 import Presence from "./pages/presence/Presence";
+import PresenceOffset from "./pages/presence/PresenceOffset";
 
 function App() {
   return (
@@ -57,6 +58,10 @@ function App() {
           <Route
             path="/presence"
             element={<ProtectedRoute component={Presence} />}
+          />
+          <Route
+            path="/presenceOffset"
+            element={<ProtectedRoute component={PresenceOffset} />}
           />
           <Route
             path="/rating/:classId/:themeId/:className/:themeName"

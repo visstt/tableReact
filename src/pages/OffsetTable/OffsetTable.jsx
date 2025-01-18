@@ -11,7 +11,7 @@ export default function OffsetTable() {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
-    navigate(-1); // Возвращаемся на предыдущую страницу
+    navigate(-2);
   };
 
   const { classId, className, subjectId, offsetName, offsetId } =

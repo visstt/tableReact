@@ -337,7 +337,7 @@ const Rating = () => {
         onClick={toggleInputMode}
         className={inputMode === "plus" ? styles.greenButton : styles.redButton}
       >
-        Переключить режим: {inputMode === "plus" ? "Кружок" : "Плюс"}
+        Переключить режим: {inputMode === "plus" ? "Фол" : "Успех"}
       </button>
       <button onClick={saveData} className={styles.button}>
         Сохранить

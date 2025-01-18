@@ -16,6 +16,7 @@ export default function Offset() {
   const subjectId = queryParams.get("subjectId");
   const classId = queryParams.get("classId");
   const className = queryParams.get("className");
+  const subjectName = new URLSearchParams(location.search).get("subjectName");
 
   useEffect(() => {
     console.log("classId:", classId);
@@ -63,7 +64,7 @@ export default function Offset() {
             {offsets.map((offset, index) => (
               <Link
                 key={offset.offsetId}
-                to={`/offsetTable?subjectId=${subjectId}&classId=${classId}&className=${className}&subjectId=${subjectId}&offsetName=${offset.offsetName}&offsetId=${offset.offsetId}`}
+                to={`/presenceOffset?subjectId=${subjectId}&classId=${classId}&className=${className}&subjectName=${subjectName}&offsetName=${offset.offsetName}&offsetId=${offset.offsetId}`}
               >
                 <li
                   className={`${styles.button} ${
