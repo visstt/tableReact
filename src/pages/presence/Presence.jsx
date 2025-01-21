@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom"; // Импортируем Link и useNavigate
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styles from "./Presence.module.css";
 import { url } from "../../costants/constants";
+import phoneIcon from "../../../public/phoneIcon.png";
 
 const Presence = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [presences, setPresences] = useState([]);
+  const [modalData, setModalData] = useState(null); // Для данных модального окна
   const { classId, className, subjectName, subjectId, themeName, themeId } =
     Object.fromEntries(new URLSearchParams(location.search));
   const [clickedCells, setClickedCells] = useState({});
-  const navigate = useNavigate(); // Инициализируем useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchStudents = async () => {
@@ -77,7 +79,6 @@ const Presence = () => {
         `${url}/presence/addPresenceRecord/${classId}-${themeId}`,
         presenceRecords
       );
-      // Перенаправление после успешного сохранения
       navigate(
         `/themeDetails?subjectId=${subjectId}&classId=${classId}&className=${className}&subjectName=${subjectName}&themeName=${themeName}&themeId=${themeId}`
       );
@@ -87,7 +88,15 @@ const Presence = () => {
   };
 
   const handleBackClick = () => {
-    navigate(-1); // Возврат на предыдущую страницу
+    navigate(-1);
+  };
+
+  const openModal = (parentFullName, parentNumber) => {
+    setModalData({ parentFullName, parentNumber });
+  };
+
+  const closeModal = () => {
+    setModalData(null);
   };
 
   if (loading) return <p>Загрузка...</p>;
@@ -99,14 +108,24 @@ const Presence = () => {
       <table className={styles.table}>
         <thead>
           <tr>
-            <th> ФИ О учащемся</th>
+            <th>ФИО учащегося</th>
             <th className={styles.width}>Нажмите для "н"</th>
           </tr>
         </thead>
         <tbody>
           {students.map((student) => (
             <tr key={student.studentId}>
-              <td>{student.fullName}</td>
+              <td className={styles.wrapper}>
+                <img
+                  src={phoneIcon}
+                  alt="Телефон"
+                  className={styles.phoneIcon}
+                  onClick={() =>
+                    openModal(student.parentFullName, student.parentNumber)
+                  }
+                />
+                {student.fullName} &nbsp;
+              </td>
               <td
                 onClick={() => handleCellClick(student.studentId)}
                 className={`${styles.width} ${
@@ -125,6 +144,24 @@ const Presence = () => {
       <button onClick={handleBackClick} className={styles.button}>
         Назад
       </button>
+
+      {modalData && (
+        <div className={styles.modal}>
+          <div className={styles.modalContent}>
+            <p>ФИО Родителя: {modalData.parentFullName}</p>
+            <p>
+              Телефон:{" "}
+              <a href={`tel:${modalData.parentNumber}`}>
+                {modalData.parentNumber}
+              </a>
+            </p>
+
+            <button onClick={closeModal} className={styles.modalButton}>
+              Закрыть
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

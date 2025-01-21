@@ -381,7 +381,7 @@ function ThemeDetails() {
         <h4>Класс: {className}</h4>
 
         <button onClick={handleNavigateToRating} className={styles.button}>
-          Рейтинг класса
+          Игровой вид спорта
         </button>
       </div>
       <div className={styles.theoryBlock}>
